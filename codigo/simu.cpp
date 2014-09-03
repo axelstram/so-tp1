@@ -120,7 +120,7 @@ void simulate(SchedBase& sch, std::vector<ptsk>& lote, const Settings& settings)
 
 	//Inicializa los cpus
     contexts = vector<cpu_ctx_t>(settings.num_cores);
-    for (int i = 0; i <settings.num_cores; i++)	{
+    for (unsigned int i = 0; i <settings.num_cores; i++)	{
         contexts[i].pid = IDLE_TASK;
         contexts[i].remaining = 0;
     }
@@ -144,7 +144,7 @@ void simulate(SchedBase& sch, std::vector<ptsk>& lote, const Settings& settings)
 		if (settings.verbose) {
 			//cerr << "--- sched, tm=" << cur_time << " pid=" << cur_pid;
 			cerr << "--- sched, tm=" << cur_time << endl;
-			for(int i = 0; i < settings.num_cores; i++) {
+			for(unsigned int i = 0; i < settings.num_cores; i++) {
 				int pid=contexts[i].pid;
 				cerr << "cpu " << i << " pid = " << pid << " rem " << contexts[i].remaining;
 				if (pid != IDLE_TASK) { cerr << " [" << pid << " ST:"<< tsks[pid].blk << " ms:" << tsks[pid].blkms << "]"; }
@@ -170,7 +170,7 @@ void simulate(SchedBase& sch, std::vector<ptsk>& lote, const Settings& settings)
 			sch.unblock(pid); // pid
 			to_unblock.push_back(pid);
             int unblocked = 0;
-			for(int i = 0; i < settings.num_cores && !unblocked; i++) {
+			for(unsigned int i = 0; i < settings.num_cores && !unblocked; i++) {
                 int it = contexts[i].pid;
 				if (it == pid) {
 					tsks[pid].blkms = -2;
@@ -183,7 +183,7 @@ void simulate(SchedBase& sch, std::vector<ptsk>& lote, const Settings& settings)
 			}
 		}
 		//Itera por cada cpu
-		for(int cpu= 0; cpu < settings.num_cores; cpu++){
+		for(unsigned int cpu= 0; cpu < settings.num_cores; cpu++){
 			int cpu_pid= contexts[cpu].pid;
 			int cpu_context_remain = contexts[cpu].remaining;
 			if (!cpu_context_remain) {
@@ -263,7 +263,7 @@ void simulate(SchedBase& sch, std::vector<ptsk>& lote, const Settings& settings)
 
 		//Muestra que esta realizando cada cpu
 		//y calcula si hay contexto total restante (ver while)
-		for(int i= 0; i < contexts.size(); i++){
+		for(unsigned int i= 0; i < contexts.size(); i++){
 			context_remain += contexts[i].remaining;
 			if (contexts[i].remaining /*context_remain*/) {
 				cout << "# CONTEXT CPU " << i << " " << cur_time << endl;
