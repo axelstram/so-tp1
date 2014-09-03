@@ -42,7 +42,10 @@ string one_line_summary(const Settings &s)
 	os << s.tasks_file << " " << s.num_cores << " " << s.switch_cost << " " << s.migrate_cost << " " << s.sched_class;
 	vector<int>::const_iterator it = s.sched_args.begin();
 	++it; //Saco el primer parametro que es un agregado para que muestre los cores.
-	while(it != s.sched_args.end()) os << " " << *it++;
+
+	while(it != s.sched_args.end()) 
+		os << " " << *it++;
+
 	return os.str();
 }
 
@@ -86,6 +89,7 @@ bool file_readable(const string pathname)
 	ifstream tf(pathname.c_str());
 	if(!tf) return false;
 	tf.close();
+	
 	return true;
 }
 
