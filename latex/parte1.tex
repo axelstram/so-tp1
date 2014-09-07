@@ -1,0 +1,32 @@
+\subsection{Introducción}
+El objetivo de esta parte es familiarizarse con el simulador \textit{simusched}, el cual sirve para ver el comportamiento de distintos lotes
+de procesos bajo distintas políticas de scheduling. Adicionalmente se puede especificar la cantidad de cores a disposición de los procesos, y
+los costos de ciertas acciones como hacer un cambio de contexto, o cambiar un proceso para que se ejecute en otro core.
+\subsection{Ejercicio 1}
+El objetivo de este ejercicio es implementar una tarea de tipo \textbf{TaskConsola}, la cual debe simular ser una tarea interactiva.
+Para esto, la tarea realiza $n$ llamadas bloqueantes, cada una con una duración al azar entre \textit{bmin} y \textit{bmax}, ambos 
+especificados por parámetro. La implementación de esta función es bastante directa, y básicamente consiste en inicializar el generador de 
+números aleatorios con el parámetro \textit{time(NULL)}, es decir, con la fecha actual al momento de ejecutarse la función. Luego, se realizan
+$n$ llamadas bloqueantes con una duración al azar entre \textit{bmin} y \textit{bmax}, utilizando la función \texttt{uso\_IO}. Para más detalles, 
+consultar la implementación en el archivo \textit{tasks.cpp}.
+\subsection{Ejercicio 2}
+El objetivo de este ejercicio es ejecutar un lote de tareas, una intensiva en CPU y las otras 2 de tipo interactivo (\textbf{TaskConsola}), con
+la política de scheduling \textbf{FCFS}, y observar y graficar los resultados, variando la cantidad de cores.
+
+
+El lote de tarea que utilizamos es el \textit{lote1.tsk}. A continuación se pueden ver los gráficos:
+
+\includegraphics[width=1\textwidth]{./Graficos/ej2_1.png}
+\begin{center}
+ \textit{1 core}.
+\end{center}
+
+\includegraphics[width=1\textwidth]{./Graficos/ej2_2.png}
+\begin{center}
+ \textit{2 cores}.
+\end{center}
+
+\includegraphics[width=1\textwidth]{./Graficos/ej2_3.png}
+\begin{center}
+ \textit{3 core}.
+\end{center}

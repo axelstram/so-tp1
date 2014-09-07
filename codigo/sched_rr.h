@@ -6,6 +6,7 @@
 #include "basesched.h"
 
 class SchedRR : public SchedBase {
+
 	public:
 		SchedRR(std::vector<int> argn);
         ~SchedRR();
@@ -15,6 +16,7 @@ class SchedRR : public SchedBase {
 
 private:
 		int next(int cpu);
+
 };
 
 #endif
