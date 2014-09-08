@@ -31,7 +31,8 @@ int SchedFCFS::tick(int cpu, const enum Motivo m)
 
 		} else {
 
-			int sig = q.front(); q.pop();
+			int sig = q.front(); 
+			q.pop();
 			return sig;
 
 		}
@@ -40,7 +41,8 @@ int SchedFCFS::tick(int cpu, const enum Motivo m)
 		// Siempre sigue el pid actual mientras no termine.
 		if (current_pid(cpu) == IDLE_TASK && !q.empty()) {
 
-			int sig = q.front(); q.pop();
+			int sig = q.front(); 
+			q.pop();
 			return sig;
 
 		} else {

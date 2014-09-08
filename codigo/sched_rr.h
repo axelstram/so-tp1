@@ -16,7 +16,10 @@ class SchedRR : public SchedBase {
 
 private:
 		int next(int cpu);
-
+		int cantCores;
+		std::queue<int> colaDeTareas;
+		std::vector<int> quantum;
+		std::vector<int> cantTicks;
 };
 
 #endif
