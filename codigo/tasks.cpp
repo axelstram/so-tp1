@@ -5,20 +5,23 @@ using namespace std;
 
 
 void TaskCPU(int pid, vector<int> params) 
-{ // params: n
+{ 
+	//params: n
 	uso_CPU(pid, params[0]); // Uso el CPU n milisegundos.
 }
 
 
 void TaskIO(int pid, vector<int> params) 
-{ // params: ms_pid, ms_io,
+{ 
+	//params: ms_pid, ms_io,
 	uso_CPU(pid, params[0]); // Uso el CPU ms_pid milisegundos.
 	uso_IO(pid, params[1]); // Uso IO ms_io milisegundos.
 }
 
 
 void TaskAlterno(int pid, vector<int> params) 
-{ // params: ms_pid, ms_io, ms_pid, ...
+{ 
+	//params: ms_pid, ms_io, ms_pid, ...
 	for (int i = 0; i < (int)params.size(); i++) {
 		
 		if (i % 2 == 0) 
@@ -44,6 +47,30 @@ void TaskConsola(int pid, vector<int> params)
 	}
 }
 
+
+void TaskBatch(int pid, vector<int> params)
+{
+	int totalCPU = params[0];
+	int cantBloqueos = params[1];
+
+	srand(time(NULL));
+
+	while (totalCPU > 0) {
+
+		while (cantBloqueos > 0) {
+			int hayQueHacerUnBloqueo = rand() % 2;
+
+			if (hayQueHacerUnBloqueo) {
+				uso_IO(pid, 1); //Bloqueo 1 ciclo.
+				totalCPU--; //Tiempo de CPU utilizado en lanzar la llamada bloqueante. 
+			}
+
+			cantBloqueos--;
+		}
+
+		totalCPU--;
+	}
+}
 
 
 void tasks_init(void) 

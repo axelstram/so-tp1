@@ -1,1 +1,16 @@
 \subsection{Introducción}
+En esta sección se extiende el simulador con un nuevo algoritmo de scheduling, \textit{Round Robin}, y se lo testea con 
+diversos lotes de tareas.
+
+\subsection{Ejercicio 3}
+El objetivo de este ejercicio es implementar la política de scheduling \textit{Round Robin}. La función más importante es \texttt{tick(cpu, motivo)}, cuya implementación se 
+describe a continuación: si el motivo es \textbf{TICK} o \textbf{BLOCK}, se aumenta el contador de ticks del core correspondiente. Si este contador supera el quantum del core, se 
+vuelve a poner el contador en $0$, se encola la tarea actual y comienza a ejecutarse la siguiente tarea en la cola; caso contrario, se sigue ejecutando la tarea actual.
+
+Si el motivo es \textbf{EXIT}, sencillamente se devuelve la proxima tarea en la cola, sin encolar nuevamente la tarea actual. En caso de no haber más tareas, se ejecuta \textbf{IDLE\_TASK}.
+
+Para más detalles, consultar la implementación en el archivo \textit{sched\_rr.cpp}.
+
+\subsection{Ejercicio 4}
+
+\subsection{Ejercicio 5}
