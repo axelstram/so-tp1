@@ -1,5 +1,6 @@
 #include "tasks.h"
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
@@ -60,13 +61,17 @@ void TaskBatch(int pid, vector<int> params)
 		while (cantBloqueos > 0) {
 			int hayQueHacerUnBloqueo = rand() % 2;
 
-			if (hayQueHacerUnBloqueo) {
+			if (hayQueHacerUnBloqueo) 
 				uso_IO(pid, 1); //Bloqueo 1 ciclo.
-				totalCPU--; //Tiempo de CPU utilizado en lanzar la llamada bloqueante. 
-			}
-
+		 	else
+				uso_CPU(pid, 1); //Sino, uso el CPU un ciclo.
+			
+			totalCPU--; 	//Tiempo de CPU utilizado en lanzar la llamada bloqueante o en usar el CPU.
 			cantBloqueos--;
 		}
+
+		if (cantBloqueos == 0)
+			uso_CPU(pid, 1);	//Si ya no hay mas bloqueos para hacer, el resto del tiempo uso el CPU.
 
 		totalCPU--;
 	}
@@ -82,4 +87,5 @@ void tasks_init(void)
 	register_task(TaskIO, 2);
 	register_task(TaskAlterno, -1);
 	register_task(TaskConsola, 3);
+	register_task(TaskBatch, 2);
 }
