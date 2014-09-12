@@ -16,6 +16,7 @@ class SchedRR : public SchedBase {
 
 private:
 		int next(int cpu);
+		int SiguienteTarea();
 		int cantCores;
 		std::queue<int> colaDeTareas;
 		std::vector<int> quantum;

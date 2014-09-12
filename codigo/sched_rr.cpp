@@ -41,17 +41,10 @@ int SchedRR::tick(int cpu, const enum Motivo motivo)
 		return next(cpu);
 
 	if (motivo == EXIT || motivo == BLOCK) {
-
-		if (colaDeTareas.empty()) {
-			return IDLE_TASK;
-		} else {
-			int sigTarea = colaDeTareas.front(); 
-			colaDeTareas.pop();
-
-			return sigTarea;
-		}
-
+		cantTicks[cpu]++;
+		return SiguienteTarea();
 	}
+		
 
 	return 0;
 }
@@ -62,28 +55,30 @@ int SchedRR::next(int cpu)
 	int tareaActual = current_pid(cpu);
 			
 	//Me salteo la tarea idle al inicio de la simulacion y devuelvo la primera tarea real a ejecutar.
-	if (tareaActual == IDLE_TASK && !colaDeTareas.empty()) {
-		int sigTarea = colaDeTareas.front(); 
-		colaDeTareas.pop();
-
-		return sigTarea;
-	}
+	if (tareaActual == IDLE_TASK && !colaDeTareas.empty()) 
+		return SiguienteTarea();
 
 	cantTicks[cpu]++;
 
-	if (cantTicks[cpu] > quantum[cpu]) {	
+	if (cantTicks[cpu] == quantum[cpu]) {	
 		cantTicks[cpu] = 0;
-		//Vuelvo a poner la tarea al final de la cola, ya que la misma no termino de ejecutarse
-		if (tareaActual != IDLE_TASK)
-			colaDeTareas.push(tareaActual);
-		else
-			return IDLE_TASK;
+		colaDeTareas.push(tareaActual);
 
+		return SiguienteTarea();
+	}
+
+	return tareaActual;
+}
+
+
+int SchedRR::SiguienteTarea()
+{	
+	if (colaDeTareas.empty()){
+		return IDLE_TASK;
+	} else {
 		int sigTarea = colaDeTareas.front(); 
 		colaDeTareas.pop();
 
 		return sigTarea;
 	}
-
-	return tareaActual;
 }
