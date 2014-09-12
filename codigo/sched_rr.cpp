@@ -44,7 +44,6 @@ int SchedRR::tick(int cpu, const enum Motivo motivo)
 		cantTicks[cpu]++;
 		return SiguienteTarea();
 	}
-		
 
 	return 0;
 }
