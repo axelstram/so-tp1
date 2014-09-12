@@ -1,0 +1,43 @@
+Lottery Scheduling
+
+Lottery scheduling is a randomized resource allocation mechanism. Resource rights are represented by lottery tickets.1 Each allocation is determined by holding a lot-tery; the resource is granted to the client with the winning
+ticket. This effectively allocates resources to competing clients in proportion to the number of tickets that they hold.
+
+Resource Rights
+Lottery tickets encapsulate resource rights that are ab- stract, relative, and uniform. They are abstract because they quantify resource rights independently of machine details.
+Lottery tickets are relative, since the fraction of a resource that they represent varies dynamically in proportion to the contention for that resource. Thus, a client will obtain more of a lightly contended resource than one that is highly contended; in the worst case, it will receive a share propor- tional to its share of tickets in the system. Finally, tickets
+are uniform because rights for heterogeneous resources can be homogeneously represented as tickets. These properties of lottery tickets are similar to those of money in computa- tional economies.
+
+Lotteries
+Scheduling by lottery is probabilistically fair. The ex- pected allocation of resources to clients is proportional to the number of tickets that they hold. Since the scheduling algorithm is randomized, the actual allocated proportions
+are not guaranteed to match the expected proportions ex- actly. However, the disparity between them decreases as the number of allocations increases. The number of lotteries won by a client has a binomial distribution. The number of lotteries required for a client’s first win has a geometric distribution.
+
+-----------------------------------
+Ticket Transfers
+Ticket transfers are explicit transfers of tickets from one client to another. Ticket transfers can be used in any situ- ation where a client blocks due to some dependency. For example, when a client needs to block pending a reply from an RPC, it can temporarily transfer its tickets to the server on which it is waiting. ESTO NO LO VAMOS A HACER PORQUE NUESTROS PROCESOS NO SON DEPENDIENTES.
+-------------------------------------------
+
+Ticket Inflation
+Ticket inflation is an alternative to explicit ticket transfers in which a client can escalate its resource rights by creating more lottery tickets. In general, such inflation should be disallowed, since it violates desirable modularity and load insulation properties. For example, a single client could
+easily monopolize a resource by creating a large number of lottery tickets. However, ticket inflation can be very use- ful among mutually trusting clients; inflation and deflation can be used to adjust resource allocations without explicit communication.
+
+Compensation Tickets
+A client which consumes only a fraction f of its al- located resource quantum can be granted a compensation ticket that inflates its value by 1=f until the client starts its next quantum. This ensures that each client’s resource con-
+sumption, equal to f times its per-lottery win probability p, is adjusted by 1=f to match its allocated share p. Without compensation tickets, a client that does not consume its en- tire allocated quantum would receive less than its entitled share of the processor.
+
+As discussed in Section 3.4, a thread which consumesonly a fraction f of its allocated time quantum is automati-cally granted a compensation ticket that inflates its value by1=f until the thread starts its next quantum. This is consis-tent with proportional sharing, and permits I/O-bound tasksthat use few processor cycles to start quickly.For example, suppose threads A and B each hold ticketsvalued at 400 base units. Thread A always consumes its entire 100 millisecond time quantum, while thread B uses only 20 milliseconds before yielding the processor. Since both A and B have equal funding, they are equally likely to win a lottery when both compete for the processor. How-
+ever, thread B uses only f = 1=5 of its allocated time, allowing thread A to consume five times as much CPU, in violation of their 1 : 1 allocation ratio. To remedy this situation, thread B is granted a compensation ticket valued
+at 1600 base units when it yields the processor. When B next competes for the processor, its total funding will be 400=f = 2000 base units. Thus, on average B will win the processor lottery five times as often as A, each time
+consuming 1=5 as much of its quantum as A, achieving the desired 1 : 1 allocation ratio.
+
+---------------------------------------------------
+User Interface // Flexible Control // Client-Server Computation
+
+NO LO USAMOS PORQ ES UN SIMULADOR
+-----------------------------------------------------
+
+
+
+
+
+
