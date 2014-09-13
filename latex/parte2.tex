@@ -13,7 +13,7 @@ Para más detalles, consultar la implementación en el archivo \textit{sched\_rr.c
 
 \subsection{Ejercicio 4}
 En esta parte nos vamos a focalizar en la utilización de la política de scheduling implementada anteriormente para mostrar cómo se comporta la misma con diversos quantums y cantidad de cores. La intención es mostrar cuan eficiente o ineficiente puede ser una misma política tan solo con variar el quantum y mostrar que la elección del mismo es muy importante.
-Para tal motivo vamos a usar el lote \textit{lote_ej4.tsk} que contiene 4 tareas intensas en CPU y 3 interactivas. Las de CPU llegan en el momento $0$, luego una interactiva en el momento $2$ y otras dos mas en el momento $8$.
+Para tal motivo vamos a usar el lote \textit{lote\_ej4.tsk} que contiene 4 tareas intensas en CPU y 3 interactivas. Las de CPU llegan en el momento $0$, luego una interactiva en el momento $2$ y otras dos mas en el momento $8$.
 
 Como primer política vamos a tomar un RR con quantum 3, y costo de cambio de contexto de 0, con sólo un core.
 
