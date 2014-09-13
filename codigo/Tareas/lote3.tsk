@@ -1,8 +1,8 @@
 @0:
-TaskBatch 10 1
+TaskBatch 16 1
 @0:
-TaskBatch 10 2
+TaskBatch 16 2
 @0:
-TaskBatch 10 4
+TaskBatch 16 3
 @0:
-TaskBatch 10 6
+TaskBatch 16 4

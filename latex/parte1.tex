@@ -7,11 +7,12 @@ El objetivo de este ejercicio es implementar una tarea de tipo \textbf{TaskConso
 Para esto, la tarea realiza $n$ llamadas bloqueantes, cada una con una duración al azar entre \textit{bmin} y \textit{bmax}, ambos 
 especificados por parámetro. La implementación de esta función es bastante directa, y básicamente consiste en inicializar el generador de 
 números aleatorios con el parámetro \textit{time(NULL)}, es decir, con la fecha actual al momento de ejecutarse la función. Luego, se realizan
-$n$ llamadas bloqueantes con una duración al azar entre \textit{bmin} y \textit{bmax}, utilizando la función \texttt{uso\_IO}. Para más detalles, 
+$n$ llamadas bloqueantes con una duración al azar entre \textit{bmin} y \textit{bmax}, mediante la fórmula $(rand() \% (bmax-bmin)) + bmin$, utilizando la función \texttt{uso\_IO}. Para más detalles, 
 consultar la implementación en el archivo \textit{tasks.cpp}.
 \subsection{Ejercicio 2}
 El objetivo de este ejercicio es ejecutar un lote de tareas, una intensiva en CPU y las otras 2 de tipo interactivo (\textbf{TaskConsola}), con
-la política de scheduling \textbf{FCFS}, y observar y graficar los resultados, variando la cantidad de cores.
+la política de scheduling \textbf{FCFS}, y observar y graficar los resultados, variando la cantidad de cores, con un costo de cambio de contexto igual a 1, y costo de migración
+igual a 0.
 
 
 El lote de tarea que utilizamos es el \textit{lote1.tsk}. A continuación se pueden ver los gráficos:
