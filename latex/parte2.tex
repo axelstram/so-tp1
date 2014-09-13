@@ -13,15 +13,48 @@ Para más detalles, consultar la implementación en el archivo \textit{sched\_rr.c
 
 \subsection{Ejercicio 4}
 En esta parte nos vamos a focalizar en la utilización de la política de scheduling implementada anteriormente para mostrar cómo se comporta la misma con diversos quantums y cantidad de cores. La intención es mostrar cuan eficiente o ineficiente puede ser una misma política tan solo con variar el quantum y mostrar que la elección del mismo es muy importante.
-Para tal motivo vamos a usar el lote \textit{lote_ej4.tsk} que contiene 4 tareas intensas en CPU y 3 interactivas. Las de CPU llegan en el momento $0$, luego una interactiva en el momento $2$ y otras dos mas en el momento $8$.
+Para tal motivo vamos a usar el lote \textit{lote\_ej4.tsk} que contiene 4 tareas intensas en CPU y 3 interactivas. Las de CPU llegan en el momento $0$, luego una interactiva en el momento $2$ y otras dos en el momento $8$.
 
-Como primer política vamos a tomar un RR con quantum 3, y costo de cambio de contexto de 0, con sólo un core.
+Como primer política vamos a tomar un RR con quantum 3, costo de cambio de contexto de 0 y un sólo un core. El procesamiento de dicho lote arroja el siguiente gráfico:
 
 \includegraphics[width=1\textwidth]{./Graficos/ej4_1.png}
 \begin{center}
  \textit{Cores = 1, Quantum = 3, CS = 0}.
 \end{center}
 
-Como podemos apreciar, se ejecutan en una primera pasada las tareas de cpu (de la 0 a la 3 inclusive) que no son interrumpidas. 
+Como podemos apreciar, se ejecutan en una primera pasada las tareas de cpu (de la 0 a la 3 inclusive) que no tienen bloqueos. Luego se ejecuta la tarea 4, que llegó en el momento 2.
+Luego en lugar de ejecutarse la 5 o la 6 (que llegaron en el momento 8) vuelve a ejecutarse la tarea 0, luego la 1 y recién luego de esta se ejecuta la número 5. Esto ocurre porque
+cuando termina de ejecutarse por primera vez la tarea 0 vuelve a ser encolada porque su quantum terminó y todavía queda más por procesar. Cuando esto ocurre, todavía las tareas 5 y 6
+no llegaron a la cola. Esto sucede también con la tarea 1. A mitad de la primer ejecución de la tarea 2 es cuando llegan las tareas 5 y 6 y por eso en la segunda corrida (momento 13)
+las tareas 5 y 6 se ejecutan después de las 0 y 1. Conforme pasan los ticks vemos como el gráfico va siguiendo un cierto patrón de tipo escalera, característico de Round Robin,
+ya que usa un esquema de despacho de tareas circular (al hablando de un RR con una sóla cola en este caso).
+
+El siguiente experimento que queremos mostrar es qué sucede cuando el quantum de un esquema de RR es muy grande. A priori un quantum muy grande no sería muy conveniente ya que se estaría
+aproximando a un esquema de FCFS (en el caso de tareas intensas en CPU). A continuación vemos un expermiento con un quantum de 10.
+
+\includegraphics[width=1\textwidth]{./Graficos/ej4_2.png}
+\begin{center}
+ \textit{Cores = 1, Quantum = 10, CS = 0}.
+\end{center}
+
+Y a continuación el mismo lote de tareas procesado con FCFS.
+
+\includegraphics[width=1\textwidth]{./Graficos/ej4_3.png}
+\begin{center}
+ \textit{Cores = 1, Quantum = 10, CS = 0}.
+\end{center}
+
+Como se puede apreciar, un esquema de RR con un quantum alto tiende a comportarse de una manera similar al FCFS con la importante salvedad de que RR es \textit{starvation-free}, debido
+a que el quantum puede ser muy grande pero es finito.
+
+Por otro lado, un quantum muy pequeño tampoco es bueno. Esto se debe a que, si asumimos un costo de cambio de contexto mayor a 0, se va a desperdiciar mucho tiempo en cambiar de contexto
+y eso entorpecería el rendimiento general de las aplicaciones.
+
+
+\includegraphics[width=1\textwidth]{./Graficos/ej4_3.png}
+\begin{center}
+ \textit{Cores = 1, Quantum = 2, CS = 1}.
+\end{center}
+
 
 \input{ej5.tex}
