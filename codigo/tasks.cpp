@@ -61,13 +61,17 @@ void TaskBatch(int pid, vector<int> params)
 		while (cantBloqueos > 0) {
 			int hayQueHacerUnBloqueo = rand() % 2;
 
-			if (hayQueHacerUnBloqueo) 
+			if (hayQueHacerUnBloqueo) {
 				uso_IO(pid, 1); //Bloqueo 1 ciclo.
-		 	else
+				cantBloqueos--;
+			} else {
 				uso_CPU(pid, 1); //Sino, uso el CPU un ciclo.
+			}
 			
 			totalCPU--; 	//Tiempo de CPU utilizado en lanzar la llamada bloqueante o en usar el CPU.
-			cantBloqueos--;
+
+			if (totalCPU == 0)
+				break;
 		}
 
 		if (cantBloqueos == 0)
