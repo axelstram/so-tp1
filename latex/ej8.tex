@@ -1,1 +1,17 @@
 \subsection{Ejercicio 8}
+En la presente sección vamos a trabajar sobre un algoritmo de scheduling de tipo Round Robin pero que no permite la migración de procesos entre
+núcleos. Para tal motivo se utiliza una cola de \texttt{READY} para cada core, donde una vez que el proceso llega se moviliza sólo por esa cola.
+
+Cuando el proceso es bloqueado debemos tener una manera de saber a qué CPU pertenecía dicho proceso, y para tal fin cada core también tiene una
+cola de \texttt{BLOQUED}. Entonces, cuando un proceso es desbloqueado simplemente se lo busca en alguna de las listas \texttt{BLOQUED} de los cores,
+y una vez que se lo encuentra se lo agrega a la cola \texttt{READY} correspondiente al core que tenía esa tarea bloqueada. Esto hace que cada CPU
+tenga un esquema de Round Robin de un sólo core independiente del resto.
+
+A continuación mostramos un gráfico correspondiente al procesamiento del lote de tareas \textit{lote5.tsk} para este nuevo scheduler.
+
+\includegraphics[width=1\textwidth]{./Graficos/ej8_1.png}
+\begin{center}
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1}.
+\end{center}
+
+Las dos primeras tareas llegan

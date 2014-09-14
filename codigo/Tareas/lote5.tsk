@@ -1,5 +1,7 @@
 @0:
-*2 TaskCPU 10
+TaskCPU 10
+@1:
+TaskCPU 10
 @2:
 TaskCPU 10
 @3:
