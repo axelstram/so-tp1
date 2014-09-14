@@ -15,6 +15,12 @@ class SchedRR2 : public SchedBase {
 
 	private:
 		int next(int cpu);
+		int cpu_taskload(int cpu);
+		int cores;
+		std::vector<int> quantum;
+		std::vector<std::queue<int>> queues;
+		std::vector<int> ticks;
+		std::vector<int> blocked_tasks_qty;
 };
 
 #endif
