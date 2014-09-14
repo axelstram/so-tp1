@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <queue>
+#include <set>
 #include "basesched.h"
 
 class SchedRR2 : public SchedBase {
@@ -16,11 +17,14 @@ class SchedRR2 : public SchedBase {
 	private:
 		int next(int cpu);
 		int cpu_taskload(int cpu);
+		int SiguienteTarea(int cpu);
 		int cores;
 		std::vector<int> quantum;
-		std::vector<std::queue<int>> queues;
+		// Cada cpu tiene su propia queue
+		std::vector< std::queue<int> > queues;
 		std::vector<int> ticks;
-		std::vector<int> blocked_tasks_qty;
+		// Cada cpu tiene sus propias tareas bloqueadas
+		std::vector< std::set<int> > blocked_tasks;
 };
 
 #endif
