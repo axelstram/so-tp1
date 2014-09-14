@@ -18,10 +18,9 @@ SchedRR2::~SchedRR2() {
 
 void SchedRR2::load(int pid) {
 	// Tengo que cargar el proceso en la cpu con menos tareas
-	int min = cpu_taskload(0), target_cpu = 0, cpu_load = 0;
+	int min = cpu_taskload(0), target_cpu = 0;
 	for (int core = 1; core < cores; core++) {
-		cpu_load = cpu_taskload(core);
-		if (cpu_load < min)
+		if (cpu_taskload(core) < min)
 			target_cpu = core;
 	}
 	queues[target_cpu].push(pid);
@@ -89,7 +88,7 @@ int SchedRR2::SiguienteTarea(int cpu) {
 
 int SchedRR2::cpu_taskload(int cpu) {
 	// Me fijo la carga actual de la cpu
-	int tasks_qty = blocked_tasks[cpu].size() + queues[0].size();
+	int tasks_qty = blocked_tasks[cpu].size() + queues[cpu].size();
 	// Si el cpu no esta IDLE, le sumo uno ya que esta corriendo una tarea
 	return (current_pid(cpu) != IDLE_TASK) ? tasks_qty + 1 : tasks_qty;
 }
