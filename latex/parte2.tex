@@ -3,24 +3,24 @@ En esta sección se extiende el simulador con un nuevo algoritmo de scheduling, \
 diversos lotes de tareas.
 
 \subsection{Ejercicio 3}
-El objetivo de este ejercicio es implementar la política de scheduling \textit{Round Robin}. La función más importante es \texttt{tick(cpu, motivo)}, cuya implementación se 
+El objetivo de este ejercicio es implementar la polÃ­tica de scheduling \textit{Round Robin}. La función más importante es \texttt{tick(cpu, motivo)}, cuya implementación se 
 describe a continuación: si el motivo es \textbf{TICK} o \textbf{BLOCK}, se aumenta el contador de ticks del core correspondiente. Si este contador supera el quantum del core, se 
 vuelve a poner el contador en $0$, se encola la tarea actual y comienza a ejecutarse la siguiente tarea en la cola; caso contrario, se sigue ejecutando la tarea actual.
 
-Si el motivo es \textbf{EXIT}, sencillamente se devuelve la proxima tarea en la cola, sin encolar nuevamente la tarea actual. En caso de no haber más tareas, se ejecuta \textbf{IDLE\_TASK}.
+Si el motivo es \textbf{EXIT}, sencillamente se devuelve la proxima tarea en la cola, sin encolar nuevamente la tarea actual. En caso de no haber mÃ¡s tareas, se ejecuta \textbf{IDLE\_TASK}.
 
-Para más detalles, consultar la implementación en el archivo \textit{sched\_rr.cpp}.
+Para mÃ¡s detalles, consultar la implementación en el archivo \textit{sched\_rr.cpp}.
 
 \subsection{Ejercicio 4}
-En esta parte nos vamos a focalizar en la utilización de la política de scheduling implementada anteriormente para mostrar cómo se comporta la misma con diversos quantums y cantidad de cores. La intención es mostrar cuan eficiente o ineficiente puede ser una misma política tan solo con variar el quantum y mostrar que la elección del mismo es muy importante.
+En esta parte nos vamos a focalizar en la utilización de la polí­tica de scheduling implementada anteriormente para mostrar cómo se comporta la misma con diversos quantums y cantidad de cores. La intención es mostrar cuan eficiente o ineficiente puede ser una misma política tan solo con variar el quantum y mostrar que la elección del mismo es muy importante.
 
 Para tal motivo vamos a usar el lote \textit{lote\_ej4.tsk} que contiene 4 tareas intensas en CPU y 3 interactivas. Las de CPU llegan en el momento $0$, luego una interactiva en el momento $2$ y otras dos mas en el momento $8$.
 
-Como primer política vamos a tomar un RR con quantum 3, costo de cambio de contexto de 0 y un sólo un core. El procesamiento de dicho lote arroja el siguiente gráfico:
+Como primer política vamos a tomar un RR con quantum 3, costo de cambio de contexto de 1 y un sólo un core. El procesamiento de dicho lote arroja el siguiente gráfico:
 
 \includegraphics[width=1\textwidth]{./Graficos/ej4_1.png}
 \begin{center}
- \textit{Cores = 1, Quantum = 3, CS = 0}.
+ \textit{Cores = 1, Quantum = 3, CS = 1}.
 \end{center}
 
 Como podemos apreciar, se ejecutan en una primera pasada las tareas de cpu (de la 0 a la 3 inclusive) que no tienen bloqueos. Luego se ejecuta la tarea 4, que llegó en el momento 2.
@@ -28,7 +28,7 @@ Luego en lugar de ejecutarse la 5 o la 6 (que llegaron en el momento 8) vuelve a
 cuando termina de ejecutarse por primera vez la tarea 0 vuelve a ser encolada porque su quantum terminó y todavía queda más por procesar. Cuando esto ocurre, todavía las tareas 5 y 6
 no llegaron a la cola. Esto sucede también con la tarea 1. A mitad de la primer ejecución de la tarea 2 es cuando llegan las tareas 5 y 6 y por eso en la segunda corrida (momento 13)
 las tareas 5 y 6 se ejecutan después de las 0 y 1. Conforme pasan los ticks vemos como el gráfico va siguiendo un cierto patrón de tipo escalera, característico de Round Robin,
-ya que usa un esquema de despacho de tareas circular (al hablando de un RR con una sóla cola en este caso).
+ya que usa un esquema de despacho de tareas circular.
 
 El siguiente experimento que queremos mostrar es qué sucede cuando el quantum de un esquema de RR es muy grande. A priori un quantum muy grande no sería muy conveniente ya que se estaría
 aproximando a un esquema de FCFS (en el caso de tareas intensas en CPU). A continuación vemos un expermiento con un quantum de 10.
@@ -49,7 +49,7 @@ Como se puede apreciar, un esquema de RR con un quantum alto tiende a comportars
 a que el quantum puede ser muy grande pero es finito.
 
 Por otro lado, un quantum muy pequeño tampoco es bueno. Esto se debe a que, si asumimos un costo de cambio de contexto mayor a 0, se va a desperdiciar mucho tiempo en cambiar de contexto
-y eso entorpecería el rendimiento general del sistema.
+y eso entorpecerÃ­a el rendimiento general del sistema.
 
 
 \includegraphics[width=1\textwidth]{./Graficos/ej4_4.png}
@@ -57,5 +57,7 @@ y eso entorpecería el rendimiento general del sistema.
  \textit{Cores = 1, Quantum = 2, CS = 1}.
 \end{center}
 
+Si comparamos este último gráfico con el primero de la sección vemos que todas las tareas tardan más en finalizar su ejecución y la cantidad de tiempo en cambios de contexto es mayor,
+lo cual se traduce en un menor rendimiento.
 
 \input{ej5.tex}
