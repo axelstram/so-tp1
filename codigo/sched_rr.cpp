@@ -41,7 +41,7 @@ int SchedRR::tick(int cpu, const enum Motivo motivo)
 		return next(cpu);
 
 	if (motivo == EXIT || motivo == BLOCK) {
-		cantTicks[cpu]++;
+		cantTicks[cpu] = 0;
 		return SiguienteTarea();
 	}
 
