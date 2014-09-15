@@ -8,10 +8,32 @@ y una vez que se lo encuentra se lo agrega a la cola \texttt{READY} correspondie
 tenga un esquema de Round Robin de un sólo core independiente del resto.
 
 A continuación mostramos un gráfico correspondiente al procesamiento del lote de tareas \textit{lote5.tsk} para este nuevo scheduler.
+Las tareas se encolan acorde a su momento de llegada y a la carga de los demás cores. Las tres primeras se cargan una en cada core, la cuarta
+se carga en el primer core ya que todos estan igualmente cargados. Luego todas siguen ejecutándose en sus respectivos cores sin cambios de
+lugar como es esperado.
+
 
 \includegraphics[width=1\textwidth]{./Graficos/ej8_1.png}
 \begin{center}
  \textit{Cores = 3, Qantum = 3 cada core, CS = 1}.
 \end{center}
 
-Las dos primeras tareas llegan
+Ahora, con el objetivo de comparar con la política de scheduling de una sola cola, vamos a correr el mismo lote para ver cómo se comporta.
+A continuación se encuentra el gráfico con la distribución de las tareas.
+
+\includegraphics[width=1\textwidth]{./Graficos/ej8_2.png}
+\begin{center}
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1, CI = 2}.
+\end{center}
+
+Un detalle que vale la pena mencionar es que las tareas desde que iniciar hasta que finalizar estan asociadas a un solo core en el caso del
+grafico uno. No ocurre asi en el gráfico 2, en donde porciones de la tarea van cambiando de core, como se ve en el segundo gráfico.
+
+Para este lote de tareas en particular podemos apreciar que \texttt{SchedRR2} y \texttt{SchedRR} finalizan la ejecución de todas las tareas
+en un tiempo similar. Pero en el primer caso dos de las tareas finalizan rápido, algo que no sucede en el segundo caso, sin contar que en
+\texttt{SchedRR2} no hay costos por cambio de core, que sí presenta \texttt{SchedRR}.
+
+Por otro lado, si bien es cierto que \texttt{SchedRR2} termina dos de las tres tareas más rápido, también es cierto que esos cores quedan
+inactivos el resto del tiempo (para este lote) algo que no es deseable. Esta comparativa nos brinda un indicio de que si bien \texttt{SchedRR2}
+parece más eficiente, para algunos escenarios puede presentar desventajas con respecto a \texttt{SchedRR}, y dicho escenario es cuando
+un core se queda con muchas tareas pendientes y los demás están ociosos.
