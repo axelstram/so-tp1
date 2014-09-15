@@ -76,15 +76,22 @@ usando exactamente los mismos parámetros. El primero es usando el scheduler RR2:
 
 El siguientes es con el scheduler RR:
 
-
 \includegraphics[width=1\textwidth]{./Graficos/ej8_out_cores_timeline_2.png}
 \begin{center}
- \textit{Cores = 3, Qantum = 3 cada core, CS = 1}.
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1, CI = 2}.
 \end{center}
 
-
+En este segundo gráfico podemos ver mejor cómo es que el tiempo de cambio de core afecta al tiempo total de procesamiento del lote. El costo de cambio de core
+es nulo en RR2 debido a que las tareas se asignan a un core fijo hasta que finalizan.
 Algunas conclusiones que podemos sacar con esta corrida de lotes y las de puntos anteriores de RR son:
+
 \begin{itemize}
-	\item El rendimiento de ambos schedulers depende mucho del contexto, es decir, de cómo vienen dadas las tareas, sus tipos, duraciones, orden, etc
-	\item 
+	\item El rendimiento de ambos schedulers depende mucho del contexto, es decir, de cómo vienen dadas las tareas, sus tipos, duraciones, orden, etc.
+	Hay ciertos lotes que favorecen el uso de RR y hay otros que favorecen el uso de RR2.
+	\item A nivel implementativo, RR es más fácil que RR2.
+	\item Una de las ventajas de RR2 es que no se paga el costo de cambio de cores, ya que cada tarea posee un único core en el que se ejecuta.
+	\item Una desventaja de RR2 es que puede, en algunas situaciones, dejar cores ociosos. RR también lo hace pero en mucha menor medida. En el caso de
+	RR depende más que nada de la cantidad de tareas que quedan en relación al número de cores. En caso de RR2, pueden quedar muchas tareas asignadas a un solo core
+	y ninguna al resto.
+	\item Si hubiese a priori una política de balance de carga de los cores para RR2, estos estarían menos tiempo ociosos y mejoraría la performance del scheduler.
 \end{itemize}
