@@ -36,4 +36,31 @@ en un tiempo similar. Pero en el primer caso dos de las tareas finalizan rápido,
 Por otro lado, si bien es cierto que \texttt{SchedRR2} termina dos de las tres tareas más rápido, también es cierto que esos cores quedan
 inactivos el resto del tiempo (para este lote) algo que no es deseable. Esta comparativa nos brinda un indicio de que si bien \texttt{SchedRR2}
 parece más eficiente, para algunos escenarios puede presentar desventajas con respecto a \texttt{SchedRR}, y dicho escenario es cuando
-un core se queda con muchas tareas pendientes y los demás están ociosos.
+un core se queda con muchas tareas pendientes y los demás no poseen ninguna. Para estos casos se podría implementar alguna política de balance
+de carga, es decir, si un core tiene muchas tareas y los demás ninguna, se podrían mover algunas tareas del core más ocupado para los de menos
+carga. En este caso estaríamos pagando la penalización del cambio de core (por el traslado de colas), pero es preferible eso antes que algún
+core quede inactivo.
+
+A continuación vamos a correr nuevamente los dos schedulers con el lote de tareas \texttt{lote6.tsk} que resultará en tareas pesadas para
+el core 0, y tareas mas livianas para el resto. El primer core tendrá un quantum mas grande que los otros. La idea es mostrar un escenario
+en donde puedo aprovechar cierta característica de los cores.
+
+La idea detrás del diseño de este lote es construirlo para que el core 0 tome las tareas mas pesadas (en cuanto a CPU) y el resto las más
+livianas. Además se configura la corrida del scheduler con tres cores, de los cuales el primero tiene un quantum mas alto que los demás.
+Así queda el procesamiento del \texttt{lote6.tsk} con \texttt{SchedRR2}:
+
+\includegraphics[width=1\textwidth]{./Graficos/ej8_3.png}
+\begin{center}
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1}.
+\end{center}
+
+Y con \texttt{SchedRR} el procesamiento de dicho lote queda de la siguiente forma:
+
+\includegraphics[width=1\textwidth]{./Graficos/ej8_4.png}
+\begin{center}
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1, CI = 2}.
+\end{center}
+
+Vemos que para este lote, \texttt{SchedRR2} tiene mejor performance. Las tareas son finalizadas más rápido, y todo el lote es procesado
+más rápido que en \texttt{SchedRR}. Aún así en \texttt{SchedRR2} tenemos bastante tiempo de procesamiento en donde un procesador u otro permanece ocioso.
+Eso ocurre también en \texttt{SchedRR} pero es menor la cantidad de tiempo que los cores permanecen ociosos, aunque el desempeño final es peor.

@@ -50,4 +50,6 @@ simusched
 
 # Others
 *.*~
+.cproject
+.project
 
