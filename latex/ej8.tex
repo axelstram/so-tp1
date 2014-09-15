@@ -64,3 +64,27 @@ Y con \texttt{SchedRR} el procesamiento de dicho lote queda de la siguiente form
 Vemos que para este lote, \texttt{SchedRR2} tiene mejor performance. Las tareas son finalizadas más rápido, y todo el lote es procesado
 más rápido que en \texttt{SchedRR}. Aún así en \texttt{SchedRR2} tenemos bastante tiempo de procesamiento en donde un procesador u otro permanece ocioso.
 Eso ocurre también en \texttt{SchedRR} pero es menor la cantidad de tiempo que los cores permanecen ociosos, aunque el desempeño final es peor.
+
+Para ver esto más claro, a continuación mostramos los graficos de las actividades de los cores a lo largo del tiempo para el \texttt{lote6.tsk}
+usando exactamente los mismos parámetros. El primero es usando el scheduler RR2:
+
+
+\includegraphics[width=1\textwidth]{./Graficos/ej8_out_cores_timeline.png}
+\begin{center}
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1}.
+\end{center}
+
+El siguientes es con el scheduler RR:
+
+
+\includegraphics[width=1\textwidth]{./Graficos/ej8_out_cores_timeline_2.png}
+\begin{center}
+ \textit{Cores = 3, Qantum = 3 cada core, CS = 1}.
+\end{center}
+
+
+Algunas conclusiones que podemos sacar con esta corrida de lotes y las de puntos anteriores de RR son:
+\begin{itemize}
+	\item El rendimiento de ambos schedulers depende mucho del contexto, es decir, de cómo vienen dadas las tareas, sus tipos, duraciones, orden, etc
+	\item 
+\end{itemize}
