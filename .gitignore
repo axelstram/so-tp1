@@ -52,4 +52,6 @@ simusched
 *.*~
 .cproject
 .project
-
+*.aux
+*.toc
+*.log
