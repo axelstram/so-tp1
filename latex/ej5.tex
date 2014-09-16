@@ -154,9 +154,7 @@ La implementaci\'on  de tickets compensatorios obliga la introducci\'on de las s
 
 \begin{itemize}
 
-\item $map<tarea,multiplicador>$ aCompensar: almacena las tareas bloqueadas que deben ser compensadas cuando se produzca su desbloqueo, junto con el multiplicador de sus tickets.
-
-\item $bool$ compensada: dado un tick de reloj, indica si en el anterior tick de reloj se produjo una compensaci\'on de alguna tarea. En ese caso, el tick actual debe redistribuir los tickets.
+\item $map<tarea,par<multiplicador,bool>>$ aCompensar: almacena las tareas bloqueadas que deben ser compensadas cuando se produzca su desbloqueo, junto con el multiplicador de sus tickets y una variable bool que indica si ya se desbloqueo.
 
 \end{itemize}
 
@@ -166,11 +164,11 @@ Y de las siguientes modificaciones a las funciones e introducci\'on de una nueva
 
 \item $tick(): $ en caso de que una tarea se haya bloqueado sin consumir el total de su quantum, llama a la funci\'on $compensar()$.
 
-\item $compensar():$ agrega a la funcion que se acaba de bloquear al diccionario $aCompensar$, junto con su multiplicador correspondiente.
+\item $compensar():$ agrega a la funcion que se acaba de bloquear al diccionario $aCompensar$, junto con su multiplicador correspondiente e indicando que aun no se desbloqueo.
 
-\item $unblock(): $ si la tarea desbloqueda tiene una entrada en el diccionaro a $aCompensar$, significa que cuando se bloque\'o no consumi\'o el total de su quantum y la funci\'on $aCompensar$ guard\'o su multiplicador. En ese caso, le agrega los tickets compensatorios a la tarea, la elimina del diccionario $aCompensar$ e indica con la variable bool $compensada$ al pr\'oximo tick que hay una tarea que fue compensada y que se deben recalcular los tickets.
+\item $unblock(): $ si la tarea desbloqueda tiene una entrada en el diccionaro a $aCompensar$, significa que cuando se bloque\'o no consumi\'o el total de su quantum y la funci\'on $aCompensar$ guard\'o su multiplicador. En ese caso, se indica que la tarea fue desbloqueada y se deben recalcular los tickets.
 
-\item $loteria(): $ Acto seguido de elegir la tarea ganadora, chequea $compensada$, y si su valor es verdadero, recalcula la distribuci\'on de tickets, descompensando la tarea.
+\item $redistribuirTickets(): $ Pasa a recibir un modo de ejecucion, 0 o 1. El modo 0 indica que fue llamada desde un load o un block, por lo cual si hay tareas ya compensadas, deben seguir estandolo porque no llegaron a el tick de cambio de quantum. Por esto, realiza una distrubicion equitativa entre todos los tickets y recalcula las compensaciones de todas las tareas que necesitan ser compensadas usando sus multiplicadores, siempre y cuando ya hayan sido desbloqueadas. En cambio, el modo 1 indica que fue llamada desde un tick, por lo cual debe eliminar todas las compensaciones y redistribuir equitativamente.
 
 \end{itemize}
 
