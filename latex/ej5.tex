@@ -6,7 +6,7 @@ Para el ejercicio 5 se nos pidi\'o dise\~nar e implementar un algoritmo de \text
 
 El algoritmo de \textit{Lottery scheduling} establece un sistema de prioridad para la obtenci\'on de los recursos del sistema por parte de los procesos, basado en \textit{tickets} de loter\'ia. Cada proceso es due\~no de una determinada cantidad de tickets. En cada elecci\'on de un nuevo proceso a correr por parte del scheduler, se realiza una loter\'ia entre todos los tickets del sistema, eligi\'endose uno al azar. El pr\'oximo proceso a correr es el due\~no del ticket ganador, quien se ejecutar\'a hasta la finalizaci\'on del \textit{quantum}, y el proceso se repite.
 
-\subsubsection{Asignaci'on de recursos}
+\subsubsection{Asignación de recursos}
 
 La distribuci\'ion de los tickets y posterior elecci\'on aleatoria de uno de ellos establece un sistema de prioridades probabil\'istico basado en la cantidad de tickets que posee cada proceso. Por ejemplo, sean A y B dos procesos en un sistema de 100 tickets, teniendo A 75 tickets y B 25, se esperar\'ia que el proceso A posea el 75\% de los recursos del sistema y B el 25\%. Dado el car\'acter no determin\'istico del algoritmo, no es posible confirmar que esto suceda para cualquier ejecuci\'on de las tareas. Pero la probabilidad de que esto suceda aumenta conforme a la cantidad de ejecuciones, como se mostrar\'a en la secci\'on de experimentaci\'on. Dada que la asignaci\'on de recursos esperada es proporcional a la cantidad de tickets que posee cada proceso, decimos que \textit{Lottery Scheduling} es probabil\'isticamente justo.
 
@@ -119,7 +119,7 @@ Nuestra clase scheduler recibe como par\'ametros el quantum y la semilla pseudoa
 
 \subsubsection{Loter\'ia}
 
-Como mencionado anteriormente, nuestra implementaci\'on no diferencia entre tickets, solamente se tiene en cuenta la cantidad de ellos que cada proceso posee. La forma de elegir al ticket ganador, es elegir un n\'umero pseudoaleatorio entre 0 y la cantidad total de tickets. Acto seguido, se recorre el la lista de tareas, y se realiza una suma parcial de la cantidad de tickets de las tareas recorridas. Se itera por las tareas, mientras la suma parcial sea menor al n\'umero ganador. La tarea ganadora va a ser aquella en la cual la iteraci\'on termine, es decir, la primera tal que la suma parcial $+$ la cantidad de tickets de la tarea ganadora supera el numero pseudoaleatorio elegido.
+Como mencionado anteriormente, nuestra implementaci\'on no diferencia entre tickets, solamente se tiene en cuenta la cantidad de ellos que cada proceso posee. La forma de elegir al ticket ganador, es elegir un n\'umero pseudoaleatorio entre 0 y la cantidad total de tickets. Acto seguido, se recorre la lista de tareas, y se realiza una suma parcial de la cantidad de tickets de las tareas recorridas. Se itera por las tareas, mientras la suma parcial sea menor al n\'umero ganador. La tarea ganadora va a ser aquella en la cual la iteraci\'on termine, es decir, la primera tal que la suma parcial $+$ la cantidad de tickets de la tarea ganadora supera el numero pseudoaleatorio elegido.
 
 \begin{center}
     \includegraphics[scale=0.6]{./Graficos/loteria.png}
