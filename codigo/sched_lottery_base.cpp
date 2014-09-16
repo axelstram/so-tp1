@@ -3,17 +3,17 @@
 
 using namespace std;
 
-SchedLottery::SchedLottery(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0)
+SchedLotteryBase::SchedLotteryBase(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0)
 {
 	std::srand(semilla);
 }
 
-SchedLottery::~SchedLottery() 
+SchedLotteryBase::~SchedLotteryBase()
 {
 
 }
 
-void SchedLottery::load(int pid) 
+void SchedLotteryBase::load(int pid)
 {
   	
   	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
@@ -23,7 +23,7 @@ void SchedLottery::load(int pid)
   	redistribuirTickets();
 }
 
-void SchedLottery::load(int pid,int deadline) 
+void SchedLotteryBase::load(int pid,int deadline)
 {
 	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
 
@@ -32,14 +32,14 @@ void SchedLottery::load(int pid,int deadline)
   	redistribuirTickets();
 }
 
-void SchedLottery::unblock(int pid) 
+void SchedLotteryBase::unblock(int pid)
 {
 	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
 
 	redistribuirTickets();
 }
 
-int SchedLottery::tick(int cpu, const enum Motivo motivo) 
+int SchedLotteryBase::tick(int cpu, const enum Motivo motivo)
 {
 
 	int tareaActual = current_pid(cpu);
@@ -88,7 +88,7 @@ int SchedLottery::tick(int cpu, const enum Motivo motivo)
 }
 	
 
-int SchedLottery::loteria()
+int SchedLotteryBase::loteria()
 {
 	int ticketGanador = rand() % 100;
 
@@ -122,7 +122,7 @@ int SchedLottery::loteria()
 
 // FUNCION REDISTRIBUIR TICKETS!
 
-void SchedLottery::redistribuirTickets()
+void SchedLotteryBase::redistribuirTickets()
 {
 	// Dividimos los 100 tickets por la cantidad de Tareas
 

@@ -1,15 +1,15 @@
-#ifndef __SCHED_LOT__BASE_
-#define __SCHED_LOT__BASE_
+#ifndef __SCHED_LOTTERY_BASE__
+#define __SCHED_LOTTERY_BASE__
 
 #include "basesched.h"
 #include <map>
 #include <list>
 #include <utility>
 
-class SchedLottery : public SchedBase {
+class SchedLotteryBase : public SchedBase {
   public:
-    SchedLottery(std::vector<int> argn);
-    ~SchedLottery();
+    SchedLotteryBase(std::vector<int> argn);
+    ~SchedLotteryBase();
     virtual void load(int pid);
     virtual void load(int pid, int deadline);
     virtual void unblock(int pid);
