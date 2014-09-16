@@ -36,7 +36,23 @@ void SchedLottery::unblock(int pid)
 {
 	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
 
-	redistribuirTickets();
+	int ticketsOriginales = redistribuirTickets();
+
+	std::map<int,int>::iterator itBlock = aCompensar.find(pid);
+
+	if(itBlock != aCompensar.end())
+	{
+
+		int multiplicador = itBlock->second;
+
+		int ticketsAgregados = ticketsOriginales*multiplicador - ticketsOriginales;
+
+		((tareasYTickets.begin())->second) *= multiplicador;
+		compensada = true;
+		aCompensar.erase(itBlock);
+		cantTickets += ticketsAgregados;
+	}
+	
 }
 
 int SchedLottery::tick(int cpu, const enum Motivo motivo) 
@@ -64,6 +80,11 @@ int SchedLottery::tick(int cpu, const enum Motivo motivo)
 		}
 		else if (motivo == EXIT || motivo == BLOCK)
 		{
+			if((motivo == BLOCK) && (cantTicks < quantum))
+			{
+				compensar(tareaActual, cantTicks);
+			}
+
 			cantTicks = 0;
 
 			std::list<std::pair<int, int> >::iterator it = tareasYTickets.begin();
@@ -92,7 +113,10 @@ int SchedLottery::loteria()
 {
 	std::srand(semilla); 
 
-	int ticketGanador = rand() % 100;
+	int ticketGanador = rand() % cantTickets;
+
+	if(ticketGanador > cantTickets)
+		ticketGanador = cantTickets;
 
 	int duenioTicketGanador;
 
@@ -107,21 +131,30 @@ int SchedLottery::loteria()
   			if(ticketGanador <= sumaParcial)
   			{
   				duenioTicketGanador = it->first;
-  				
-  					return duenioTicketGanador;
-  				
+  					break;
+  					  				
   			}
 
   			++it;
   		}
+
+  		if(compensada)
+  		{
+  			compensada = false;
+  			redistribuirTickets();
+  		}
+
+  		return duenioTicketGanador;
 }
 
 
 // FUNCION REDISTRIBUIR TICKETS!
 
-void SchedLottery::redistribuirTickets()
+int SchedLottery::redistribuirTickets()
 {
 	// Dividimos los 100 tickets por la cantidad de Tareas
+
+	cantTickets = 100;
 
 	int cantTareas = tareasYTickets.size();
 
@@ -145,5 +178,18 @@ void SchedLottery::redistribuirTickets()
   		}
 
   	}
+  	return ticketsCadaUno;
+}
 
+void SchedLottery::compensar(int tarea, int ticks)
+{
+	//si uso 0 ticks, asumo que uso uno
+	if(ticks == 0)
+		ticks =1;
+
+	double fraccionQuantum = (double) ticks / quantum;
+
+	int multiplicador = (int) 1/fraccionQuantum;
+
+	aCompensar.insert(std::pair<int,int>(tarea,multiplicador));	
 }
