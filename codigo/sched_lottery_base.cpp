@@ -1,11 +1,11 @@
-#include "sched_lottery.h"
+#include "sched_lottery_base.h"
 #include <cstdlib>
 
 using namespace std;
 
 SchedLottery::SchedLottery(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0)
 {
-	
+	std::srand(semilla);
 }
 
 SchedLottery::~SchedLottery() 
@@ -68,7 +68,7 @@ int SchedLottery::tick(int cpu, const enum Motivo motivo)
 
 			std::list<std::pair<int, int> >::iterator it = tareasYTickets.begin();
 
-			while(it != tareasYTickets.end() && it->first != tareaActual)
+			while(it->first != tareaActual)
 			{
 				it++;
 			}
@@ -90,13 +90,16 @@ int SchedLottery::tick(int cpu, const enum Motivo motivo)
 
 int SchedLottery::loteria()
 {
-	std::srand(semilla); 
-
 	int ticketGanador = rand() % 100;
 
 	int duenioTicketGanador;
 
 		std::list<std::pair<int,int> >::iterator it = tareasYTickets.begin();
+
+		if(ticketGanador == 0)
+		{
+			return tareasYTickets.begin()->first;
+		}
 
 		int sumaParcial = 0;
 

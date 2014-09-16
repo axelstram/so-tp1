@@ -137,7 +137,7 @@ int SchedLottery::loteria()
 
 void SchedLottery::redistribuirTickets(int modo)
 {
-	// Dividimos los 100 tickets por la cantidad de Tareas
+	//Primero redistribuimos equitativamente entre todas las tareas
 
 	cantTickets = 100;
 
@@ -163,14 +163,15 @@ void SchedLottery::redistribuirTickets(int modo)
   		}
 
   	}
-  	
+  	// si fui llamado desde un tick, elimino las tareas compensadas y termino
   	if(modo == 1)
   	{
   		aCompensar.clear();
   	}
 
   	if(modo == 0)
-  	{// a compensar tareas
+  	{// si fui llamado desde un block o desde un tick, tengo que agregarle las compensaciones a las tareas
+  	//  que habian sido compensadas con la nueva distribucion de tickets
 
   		cantTickets = 0;
 

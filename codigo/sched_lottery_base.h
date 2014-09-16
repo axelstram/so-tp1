@@ -1,5 +1,5 @@
-#ifndef __SCHED_LOT__
-#define __SCHED_LOT__
+#ifndef __SCHED_LOT__BASE_
+#define __SCHED_LOT__BASE_
 
 #include "basesched.h"
 #include <map>
