@@ -3,6 +3,8 @@
 
 #include "basesched.h"
 #include <map>
+#include <list>
+#include <utility>
 
 class SchedLottery : public SchedBase {
   public:
@@ -15,21 +17,20 @@ class SchedLottery : public SchedBase {
 
     private:
 		int loteria();
+		void redistribuirTickets();
 		// el valor de quantum por parametro
 		int quantum;
 		// la cantidad de ticks actuak
 		int cantTicks;
 		int semilla;
-		std::map<int, int> tareasYTickets;
-		bool compensatorio;
-		/* Para cambiar en el constructor:
-		 0 = modo basico
-		 1 = modo basico + compensation tickets
-		*/
-		bool hayCompensado;
+		std::list<std::pair<int,int> > tareasYTickets;
+		
+		//para saber si debe ser compensada en el unblock
+		std::vector<double> aCompensar;
+		//para saber si hubo tareas compensadas en el anterior ciclo
+		bool compensadas;
 		//Para saber si el proceso current_pid fue compensado en el tick que paso
-		std::map<int, bool> bloqueadasTerminadas;
-		//Para saber cuales tareas fueron bloqueadas o ya terminaron (1 == ready, 0 == block o exit)
+		
 };
 
 #endif
