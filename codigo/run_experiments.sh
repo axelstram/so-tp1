@@ -5,7 +5,9 @@
 N="1"
 while [ $N -lt $1 ];
 do
-    echo "Creating ej9_${N}_${4}.png experiment..."
-    ./simusched Tareas/lote$2.tsk 1 1 0 SchedLottery$4 $3 $RANDOM | ./graphsched.py > ../latex/Graficos/ej9_${N}_bis.png
+    echo "Creating experiment ${N}..."
+    R=$RANDOM
+    ./simusched Tareas/lote$2.tsk 1 1 0 SchedLotteryBase $3 $R | ./graphsched.py > ../latex/Graficos/ej9_${N}_base.png
+    ./simusched Tareas/lote$2.tsk 1 1 0 SchedLottery $3 $R | ./graphsched.py > ../latex/Graficos/ej9_${N}.png
     N=$[ $N+1 ]
 done
