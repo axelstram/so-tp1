@@ -6,7 +6,7 @@ Para el ejercicio 5 se nos pidi\'o dise\~nar e implementar un algoritmo de \text
 
 El algoritmo de \textit{Lottery scheduling} establece un sistema de prioridad para la obtenci\'on de los recursos del sistema por parte de los procesos, basado en \textit{tickets} de loter\'ia. Cada proceso es due\~no de una determinada cantidad de tickets. En cada elecci\'on de un nuevo proceso a correr por parte del scheduler, se realiza una loter\'ia entre todos los tickets del sistema, eligi\'endose uno al azar. El pr\'oximo proceso a correr es el due\~no del ticket ganador, quien se ejecutar\'a hasta la finalizaci\'on del \textit{quantum}, y el proceso se repite.
 
-\subsubsection{Asignación de recursos}
+\subsubsection{Asignaci\'on de recursos}
 
 La distribuci\'ion de los tickets y posterior elecci\'on aleatoria de uno de ellos establece un sistema de prioridades probabil\'istico basado en la cantidad de tickets que posee cada proceso. Por ejemplo, sean A y B dos procesos en un sistema de 100 tickets, teniendo A 75 tickets y B 25, se esperar\'ia que el proceso A posea el 75\% de los recursos del sistema y B el 25\%. Dado el car\'acter no determin\'istico del algoritmo, no es posible confirmar que esto suceda para cualquier ejecuci\'on de las tareas. Pero la probabilidad de que esto suceda aumenta conforme a la cantidad de ejecuciones, como se mostrar\'a en la secci\'on de experimentaci\'on. Dada que la asignaci\'on de recursos esperada es proporcional a la cantidad de tickets que posee cada proceso, decimos que \textit{Lottery Scheduling} es probabil\'isticamente justo.
 
@@ -24,7 +24,7 @@ El concepto b\'asico de \textit{Lottery Scheduling} puede mejorarse considerable
 
 \item \textit{Transferencia de tickets:} cuando un proceso est\'a bloqueado esperando la respuesta de otro proceso, puede transferir sus tickets a \'este, causando una mejora de perfomance ya que va a tener m\'as probabilidad de obtener el CPU, agilizando la respuesta. Cuando el primer proceso recibe la respuesta, le son devueltos sus tickets. De esta forma se resuelve el problema de la proridad inversa, de una manera similar a herencia de prioridades.
 
-\item \textit{Tickets compensatorios:} los procesos que se bloquean en espera de una respuesta externa y no consumen el total de su quantum terminan obteniendo menos tiempo de CPU del que les corresponde, rompiendo el modelo de asignaci\'on en cuanto a la probabilidad. La forma de solucionar esto es la asignaci\'on de tickets compensatorios a estos procesos. De esta forma cuando un proceso utiliza una fraci\'on de su quantum, recibir\'a tickets aumentando su probabilidad de ser elegido para el pr\'oximo quantum.
+\item \textit{Tickets compensatorios:} los procesos que se bloquean en espera de una respuesta externa y no consumen el total de su quantum terminan obteniendo menos tiempo de CPU del que les corresponde, rompiendo el modelo de asignaci\'on en cuanto a la probabilidad. La forma de solucionar esto es la asignaci\'on de tickets compensatorios a estos procesos. De esta forma cuando un proceso utiliza una fraci\'on de su quantum, recibir\'a tickets aumentando su probabilidad de ser elegido para el quantum siguiente a su desbloqueo.
 
 \item \textit{Inflaci\'on de tickets:} cuando un proceso sabe que debe ejecutar una secci\'on cr\'itica y considera que va a necesitar m\'as tiempo de CPU, puede aumentar su n\'umero de tickets. Esta es una forma simple y eficiente de reflejar esa necesidad en el sistema, y no es necesario comunicarse con los otros procesos. Cabe aclarar que, este m\'etodo s\'olo es utilizable en un sistema donde los procesos ejecutan de forma cooperativa. 
 
@@ -76,7 +76,7 @@ El sistema comienza con una cantidad de 100 tickets que son distribuidos equitat
 
 \vspace{2mm}
 
-La estructura de datos elegida para almacenar las tareas y su cantidad de tickets correspondiente es una lista de pares$<pid, \#tickets>$. La forma de conocer si una tarea est\'a lista para ser ejecutada es otro diccionario$<pid, bool>$, que indica, para el valor verdadero que la tarea se encuentra en estado $ready$, y para el valor falso que se encuentra en estado $block$ o $exit$.
+La estructura de datos elegida para almacenar las tareas listas y su cantidad de tickets correspondiente es una lista de pares$<pid, \#tickets>$. La forma de conocer si una tarea est\'a lista para ser ejecutada es otro diccionario$<pid, bool>$, que indica, para el valor verdadero que la tarea se encuentra en estado $ready$, y para el valor falso que se encuentra en estado $block$ o $exit$. La elecci\'on de esta estructura de datos se basa en la necesidad de recorrerla de principio a fin, y como se ver\'a m\'as adelante, que mantenga un orden particular.
 
 \vspace{2mm}
 
@@ -90,9 +90,7 @@ La estructura de datos elegida para almacenar las tareas y su cantidad de ticket
 
 \item $int$ semilla: almacena la semilla pseudoaleatoria
 
-\item $list<pid, cantTickets>$ tareasYTickets: lista que almacena las tareas del sistema y para cada una, la cantidad de tickets que posee
-
-\item $map<tarea, bool>$ bloqueadasTerminadas: diccionario que indica para cada tarea si se encuentra lista para ejecutar.
+\item $list<pid, cantTickets>$ tareasYTickets: lista que almacena las tareas $ready$ del sistema y para cada una, la cantidad de tickets que posee
 
 \end{itemize}
 
@@ -100,7 +98,6 @@ La estructura de datos elegida para almacenar las tareas y su cantidad de ticket
 \vspace{2mm}
 
 Nuestra clase scheduler recibe como par\'ametros el quantum y la semilla pseudoaleatorioa. \textit{SchedLottery} hereda de la clase \textit{SchedBase},y por lo tanto implementa las funciones \textit{load()}, \textit{unblock()} y \textit{tick()}, adem\'as cuenta con:
-
 
 \vspace{2mm}
 
@@ -110,9 +107,9 @@ Nuestra clase scheduler recibe como par\'ametros el quantum y la semilla pseudoa
 
 \item $load():$ carga una nueva tarea que llega al scheduler, agreg\'andola a ambos diccionarios, y repartiendo nuevamente los tickets entre todos los procesos de forma equitativa.
 
-\item $unblock(): $ desbloquea una tarea, actualizando su valor en el diccionario bloqueadasTerminadas.
+\item $unblock(): $ desbloquea una tarea, agregandola nuevamente a la lista de tareas ready y reparte nuevamente los tickets.
 
-\item $tick(): $ se ejecuta en cada tick del reloj, incrementando en $1$ la cantidad de ticks de la tarea actual. En caso de que se agote el quantum de \'esta, se desaloja y se llama a loter\'ia. Si la tarea se bloque\'o se actualiza en el diccionario bloqueadasTerminadas y se llama a loter\'ia. Si la tarea En caso de que no queden m\'as tareas a ejecutar, finaliza la ejecuci\'on pasando a la tarea IDLE\_TASK.
+\item $tick(): $ se ejecuta en cada tick del reloj, incrementando en $1$ la cantidad de ticks de la tarea actual. En caso de que se agote el quantum de \'esta, se desaloja y se llama a loter\'ia. Si la tarea se bloque\'o termin\'o, se elimina de la lista de tareas rady y se llama a loter\'ia. En caso de que no queden m\'as tareas a ejecutar, finaliza la ejecuci\'on pasando a la tarea IDLE\_TASK.
 \item $loteria(): $ se realiza la loter\'ia, eligiendo la nueva tarea a ejecutar. Se explica a continuaci\'on.
 
 \end{itemize}
@@ -129,11 +126,15 @@ Dado que los tickets poseen todos el mismo valor de probabilidad, y son uniforme
 
 \vspace{2mm}
 
-Como por cuestiones de perfomance NO BLOQUEAMOS (NO SE)
+La f\'ormula para obtener el ticket ganador es $ = rand() \% cantidadTickets$, donde cantidadTickets es la cantidad total de tickets del sistema, $rand()$ es la funci\'on que genera una secuencia de n\'umeros pseudoaleatorios del lenguaje C, alimentada por la semilla de par\'ametro y \% es el operador resto. Esta f\'ormula genera una secuencia pseudoaleatorioa entre $0$ y $cantidadTickets$, lo cual es suficiente para los experimentos a realizar.
+
+\vspace{2mm}
+
+La implementaci\'n del scheduler descripto hasta ahora se encuentra en los archivos \textbf{sched\_lottery\_base.cpp} y \textbf{sched\_lottery\_base.h}
 
 \subsubsection{Optimizaciones}
 
-Desde el punto de vista de performance, realizamos la optimizaci\'on sugerida por los autores para agilizar la b\'usqueda de la tarea ganadora. Esta b\'usqueda se realiza en tiempo lineal sobre la lista de tareas, buscando a la tarea due\~na del ticket ganador. Si ordenamos la lista seg\'un la cantidad de tickets de cada tarea de forma decreciente puede obtenerse una mejora de performance, ya que aquellas tareas con mayor cantidad de tickets tienen m\'as probabilidad de poseer el ticket ganador. Dado que es necesario ordenar la lista, lo realizaremos s\'olo en caso de que cambie la distribuci\'on de tickets, por ejemplo, cuando se carga una nueva tarea o cuando termina. 
+Desde el punto de vista de performance, realizamos la optimizaci\'on sugerida por los autores para agilizar la b\'usqueda de la tarea ganadora. Esta b\'usqueda se realiza en tiempo lineal sobre la lista de tareas, buscando a la tarea due\~na del ticket ganador. Si ordenamos la lista seg\'un la cantidad de tickets de cada tarea de forma decreciente puede obtenerse una mejora de performance, ya que aquellas tareas con mayor cantidad de tickets tienen m\'as probabilidad de poseer el ticket ganador. Dado que es necesario ordenar la lista, lo realizaremos s\'olo en caso de que cambie la distribuci\'on de tickets. En nuestra configuraci\'on del scheduler, esto va a suceder cuando una tarea se desbloquee y deba recibir tickets compensatorios, introducidos en la siguiente secci\'on. Como esta diferencia de tickets se mantiene por s\'olo un tick, en muchos casos ordenar para luego realizar la b\'usqueda no genere una mejora, pero de todas formas decidimos agregar la optimizaci\'on al scheduler para posibles distintas configuraciones de la distribuci\'on de tickets,
 
 \vspace{2mm}
 
@@ -141,8 +142,41 @@ Desde el punto de vista algor\'itmico, los autores propon\'ian diversas modifica
 
 \vspace{2mm}
 
-Cuando se bloquea una tarea, nuestra implementaci\'on de los tickets compensatorios calcula la fracci\'on $f$ de quantum que \'esta utiliz\'o. Acto seguido multiplica la cantidad de tickets de la tarea por $1/f$. Como cada tarea posee la misma cantidad de tickets, ahora la tarea en cuesti\'on tiene $1/f$ m\'as probabilidad de salir que las dem\'as, siendo efectivamente compensada en la elecci\'on del siguiente quantum. HACER EXPLICACION
+Cuando se bloquea una tarea, nuestra implementaci\'on de los tickets compensatorios calcula la fracci\'on $f$ de quantum que \'esta utiliz\'o. Acto seguido multiplica la cantidad de tickets de la tarea por $1/f$. Como cada tarea posee la misma cantidad de tickets, ahora la tarea en cuesti\'on tiene $1/f$ m\'as probabilidad de salir que las dem\'as, siendo efectivamente compensada en la elecci\'on del siguiente quantum a su desbloqueo. Por ejemplo, en un sistema con 100 tickets y 10 tareas, cada tarea posee un $10\%$ de probabilidad. En caso de que una tarea utilize $1/3$ de su quantum, en elsiguiente quantum a ser desbloqueada se multiplicar\'an sus tickets por $1/(1/3)$, es decir tendra $30$ tickets.
 
+\vspace{2mm}
+
+Calculando la probabilidad como $\#ticketsTarea/\#ticketsTotales$, vemos que la tarea compensada posee $30/120 = 25\%$ de probabilidad de ser elegida, mientras que las dem\'as poseen $10/120 = 8.33\%$ de ser elegidas, siendo aproximadamente el triple de veces m\'as probable por el quantum siguiente a su desbloqueo.
+
+\vspace{2mm}
+
+La implementaci\'on  de tickets compensatorios obliga la introducci\'on de las siguientes estructuras de datos:
+
+\begin{itemize}
+
+\item $map<tarea,multiplicador>$ aCompensar: almacena las tareas bloqueadas que deben ser compensadas cuando se produzca su desbloqueo, junto con el multiplicador de sus tickets.
+
+\item $bool$ compensada: dado un tick de reloj, indica si en el anterior tick de reloj se produjo una compensaci\'on de alguna tarea. En ese caso, el tick actual debe redistribuir los tickets.
+
+\end{itemize}
+
+Y de las siguientes modificaciones a las funciones e introducci\'on de una nueva:
+
+\begin{itemize}
+
+\item $tick(): $ en caso de que una tarea se haya bloqueado sin consumir el total de su quantum, llama a la funci\'on $compensar()$.
+
+\item $compensar():$ agrega a la funcion que se acaba de bloquear al diccionario $aCompensar$, junto con su multiplicador correspondiente.
+
+\item $unblock(): $ si la tarea desbloqueda tiene una entrada en el diccionaro a $aCompensar$, significa que cuando se bloque\'o no consumi\'o el total de su quantum y la funci\'on $aCompensar$ guard\'o su multiplicador. En ese caso, le agrega los tickets compensatorios a la tarea, la elimina del diccionario $aCompensar$ e indica con la variable bool $compensada$ al pr\'oximo tick que hay una tarea que fue compensada y que se deben recalcular los tickets.
+
+\item $loteria(): $ Acto seguido de elegir la tarea ganadora, chequea $compensada$, y si su valor es verdadero, recalcula la distribuci\'on de tickets, descompensando la tarea.
+
+\end{itemize}
+
+\textbf{Nota:} es necesario aclarar que nos basta una variable bool para saber si alguna tarea fue compensada, ya que luego se redistribuir\'an todos los tickets equitativamente, y es indistinto cual de todas era. En caso de que esta no sea la distribuci\'on elegida, se soluciona simplemente con un vector de bool, indicando cuales estan compensadas.
+
+\vspace{2mm}
 Las dem\'as optimizaciones no fueron consideradas por las siguientes razones:
 
 \begin{itemize}
