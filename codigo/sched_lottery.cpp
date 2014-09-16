@@ -134,11 +134,11 @@ void SchedLottery::redistribuirTickets()
   	int resto = 100 % cantTareas; // Al resto lo repartimos entre todas
 
   	
-  	std::list<std::pair<int,int> >::iterator it =tareasYTickets.begin();
+  	std::list<std::pair<int,int> >::iterator it;
 
-  	for (; it!=tareasYTickets.end(); ++it)
+  	for (tareasYTickets.begin(); it!=tareasYTickets.end(); ++it)
   	{
-  		it->second =ticketsCadaUno;
+  		it->second = ticketsCadaUno;
 
   		//reparto el resto, un ticket para cada uno hasta que se termine
 
