@@ -3,7 +3,7 @@
 
 using namespace std;
 
-SchedLottery::SchedLottery(vector<int> argn) : quantum(argn[2]), semilla(argn[1]) 
+SchedLottery::SchedLottery(vector<int> argn) : quantum(argn[1]), semilla(argn[2])
 {
 
 }
