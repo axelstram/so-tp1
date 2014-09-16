@@ -17,24 +17,21 @@ class SchedLottery : public SchedBase {
 
     private:
 		int loteria();
-		int redistribuirTickets();
+		void redistribuirTickets(int modo);
 		void compensar(int tarea, int ticks);
 		
 		// el valor de quantum por parametro
 		int quantum;
 		// la cantidad de ticks actuak
 		int cantTicks;
-		int semilla;
 		int cantTickets;
+		int semilla;
 		std::list<std::pair<int,int> > tareasYTickets;
 
-		//diccionario que indica que procesos bloqueados deberan ser compenados cuando se desbloqueen y el multiplicador
+		std::map<int,std::pair<int,bool> > aCompensar;
 
-		std::map<int,int> aCompensar;
-		
-		//variable bool que indica, para cada tick, si una tarea fue compensada y se le debe quitar la compensacion
 
-		bool compensada;
+				
 		
 };
 
