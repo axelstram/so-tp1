@@ -18,14 +18,20 @@ class SchedLottery : public SchedBase {
     private:
 		int loteria();
 		void redistribuirTickets();
-		
+		int next_tick(int tareaActual);
+		int next_blockexit(int tareaActual);
 		// el valor de quantum por parametro
 		int quantum;
 		// la cantidad de ticks actuak
 		int cantTicks;
 		int semilla;
 		std::list<std::pair<int,int> > tareasYTickets;
-				
+		
+		//para saber si debe ser compensada en el unblock
+		std::vector<double> aCompensar;
+		//para saber si hubo tareas compensadas en el anterior ciclo
+		bool compensadas;
+		//Para saber si el proceso current_pid fue compensado en el tick que paso
 		
 };
 
