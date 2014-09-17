@@ -72,11 +72,11 @@ A continuaci\'on expondremos los detalles de nuestra implementaci\'on particular
 
 \vspace{2mm}
 
-El sistema comienza con una cantidad de 100 tickets que son distribuidos equitativamente entre todos los procesos al comenzar, para garantizar la misma probabilidad a todos. Nuestra elecci\'on de 100 como n\'umero de tickets inicial se debe a que el c\'alculo de la probabilidad de cada proceso en base a su n\'umero de tickes es simple e inmediato, y nos provee de presici\'on suficiente. Es importante tambi\'en notar que en la experimentaci\'on, no habr\'a m\'as de 100 tareas ejecut\'andose en un mismo experimento. De todas formas la soluci\'on a esto no es m\'as que cambiar la variable por un n\'umero mayor, por ejemplo 1000.
+El sistema tiene una cantidad de 100 tickets que son distribuidos equitativamente entre todos los procesos , para garantizar la misma probabilidad a todos. Nuestra elecci\'on de 100 como n\'umero de tickets se debe a que el c\'alculo de la probabilidad de cada proceso en base a su n\'umero de tickes es simple e inmediato, y nos provee de presici\'on suficiente. Es importante tambi\'en notar que en la experimentaci\'on, no habr\'a m\'as de 100 tareas ejecut\'andose en un mismo experimento. De todas formas la soluci\'on a esto no es m\'as que cambiar la variable por un n\'umero mayor, por ejemplo 1000.
 
 \vspace{2mm}
 
-La estructura de datos elegida para almacenar las tareas listas y su cantidad de tickets correspondiente es una lista de pares$<pid, \#tickets>$. La forma de conocer si una tarea est\'a lista para ser ejecutada es otro diccionario$<pid, bool>$, que indica, para el valor verdadero que la tarea se encuentra en estado $ready$, y para el valor falso que se encuentra en estado $block$ o $exit$. La elecci\'on de esta estructura de datos se basa en la necesidad de recorrerla de principio a fin, y como se ver\'a m\'as adelante, que mantenga un orden particular.
+La estructura de datos elegida para almacenar las tareas listas y su cantidad de tickets correspondiente es una lista de pares$<pid, \#tickets>$.s La elecci\'on de esta estructura de datos se basa en la necesidad de recorrerla de principio a fin, y como se ver\'a m\'as adelante, que mantenga un orden particular.
 
 \vspace{2mm}
 
@@ -105,11 +105,11 @@ Nuestra clase scheduler recibe como par\'ametros el quantum y la semilla pseudoa
 
 \begin{itemize}
 
-\item $load():$ carga una nueva tarea que llega al scheduler, agreg\'andola a ambos diccionarios, y repartiendo nuevamente los tickets entre todos los procesos de forma equitativa.
+\item $load():$ carga una nueva tarea que llega al scheduler, agreg\'andola a la lista, y repartiendo nuevamente los tickets entre todos los procesos de forma equitativa.
 
 \item $unblock(): $ desbloquea una tarea, agregandola nuevamente a la lista de tareas ready y reparte nuevamente los tickets.
 
-\item $tick(): $ se ejecuta en cada tick del reloj, incrementando en $1$ la cantidad de ticks de la tarea actual. En caso de que se agote el quantum de \'esta, se desaloja y se llama a loter\'ia. Si la tarea se bloque\'o termin\'o, se elimina de la lista de tareas rady y se llama a loter\'ia. En caso de que no queden m\'as tareas a ejecutar, finaliza la ejecuci\'on pasando a la tarea IDLE\_TASK.
+\item $tick(): $ se ejecuta en cada tick del reloj, incrementando en $1$ la cantidad de ticks de la tarea actual. En caso de que se agote el quantum de \'esta, se desaloja y se llama a loter\'ia. Si la tarea se bloque\'o termin\'o, se elimina de la lista de tareas ready y se llama a loter\'ia. En caso de que no queden m\'as tareas a ejecutar, finaliza la ejecuci\'on pasando a la tarea IDLE\_TASK.
 \item $loteria(): $ se realiza la loter\'ia, eligiendo la nueva tarea a ejecutar. Se explica a continuaci\'on.
 
 \end{itemize}
