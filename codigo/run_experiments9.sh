@@ -3,16 +3,20 @@
 # Example: ./run_experiments.sh x y z
 # Donde x es la cantidad de experimentos, y es el numero de lote, z es el quantum del scheduler
 N="1"
-while [ $N -lt $1 ];
+
+ TicksTask0=0
+ TicksTask1=0
+ TicksTask2=0
+ TicksTask3=0
+ TicksTask4=0
+
+while [ $N -le $1 ];
 do
     echo "Creating experiment ${N}..."
     R=$RANDOM
     (./simusched Tareas/lote$2.tsk 1 0 0 SchedLottery $3 $R) > temp.txt
 
-    TicksTask0=0
-    TicksTask1=0
-    TicksTask2=0
-    TicksTask3=0
+    
 
 
 	while IFS= read -r line;
@@ -37,9 +41,14 @@ do
 			elif [ "${fields[2]}" == "3" ]
 			then 
 					((TicksTask3++))	
+			
+
+			elif [ "${fields[2]}" == "4" ]
+			then 
+					((TicksTask4++))	
 			fi
 			
-			if [ "${fields[1]}" == "50" ]
+			if [ "${fields[1]}" == "100" ]
 			then
 				break
 			fi
@@ -48,11 +57,13 @@ do
    	
 	done < temp.txt
 
-	echo $TicksTask0
-	echo $TicksTask1
-	echo $TicksTask2
-	echo $TicksTask3
+	
     
     N=$[ $N+1 ]
 done
 
+echo "El promedio de la tarea 0 es:" $(($TicksTask0 / $1))
+echo "El promedio de la tarea 1 es:" $(($TicksTask1 / $1))
+echo "El promedio de la tarea 2 es:" $(($TicksTask2 / $1))
+echo "El promedio de la tarea 3 es:" $(($TicksTask3 / $1))
+echo "El promedio de la tarea 4 es:" $(($TicksTask4 / $1))
