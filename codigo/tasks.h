@@ -3,5 +3,4 @@
 
 #include "basetask.h"
 void tasks_init(void);
-
 #endif
