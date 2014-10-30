@@ -3,10 +3,11 @@ En esta sección se evaluan las polí­ticas de scheduling implementadas, utilizand
 
 \subsection{Ejercicio 6}
 El objetivo de este ejercicio es programar un tipo de tarea \textbf{TaskBatch}, que durante \textit{total\_cpu} ciclos, realize \textit{cant\_bloqueos} llamadas bloqueantes, 
-en momentos elegidos pseudoaleatoriamente. La implementación es bastante directa, con la semilla del generador de números pseudoaleatorios inicializada con la fecha del sistema
-al momento de ejecutar la función. Las llamadas bloqueantes se lanzan si \textit{rand()} devuelve un número impar. Para asegurarnos de que se ejecuten 
-las \textit{cant\_bloqueos} llamadas bloqueantes antes de que se terminen los \textit{total\_cpu} ciclos, creamos procesos cuya cantidad de llamadas bloqueantes fuese
-menor o igual a la mitad de los ciclos totales de CPU.
+en momentos elegidos pseudoaleatoriamente. La implementación consiste primero en precalcular todos los instantes en donde se van a realizar las
+\textit{cant\_bloqueos} llamadas bloqueantes. Haciendo una analogía con bolillas y urnas, si todos los posibles instantes entre el momento en que el proceso comienza a 
+ejecutarse y el momento en que éste termina de ejecutarse \textit{total\_cpu} ciclos después, reprensentan las bolillas, lo que hacemos es elegir pseudoaleatoriamente
+\textit{cant\_bloqueos} bolillas sin reposición, quedando asi determinados los momentos en los cuales se van a lanzar las llamadas bloqueantes. Luego, la tarea corre durante
+\textit{total\_cpu} ciclos, utilizando la CPU o lanzando una llamada bloqueante según corresponda.
 
 Para más detalles, consultar la implementación en \textit{tasks.cpp}.
 
@@ -14,7 +15,6 @@ Para más detalles, consultar la implementación en \textit{tasks.cpp}.
 
 \input{ej8.tex}
 
-
-\subsection{Ejercicio 9}
+\input{ej9.tex}
 
 \input{ej10.tex}

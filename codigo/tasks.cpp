@@ -4,6 +4,7 @@
 
 using namespace std;
 
+void PrecalcularLlamadasBloqueantes(vector<bool>& hayLlamadasBloqueantes, int cantBloqueos);
 
 void TaskCPU(int pid, vector<int> params) 
 { 
@@ -53,30 +54,39 @@ void TaskBatch(int pid, vector<int> params)
 {
 	int totalCPU = params[0];
 	int cantBloqueos = params[1];
+	vector<bool> hayLlamadaBloqueante(totalCPU, false);
 
 	srand(time(NULL));
 
-	while (totalCPU > 0) {
+	PrecalcularLlamadasBloqueantes(hayLlamadaBloqueante, cantBloqueos);
 
-		while (cantBloqueos > 0) {
-			int hayQueHacerUnBloqueo = rand() % 2;
+	for (int cicloCPU = 0; cicloCPU < totalCPU; cicloCPU++) {
+		int hayQueHacerUnBloqueo = hayLlamadaBloqueante[cicloCPU];
 
-			if (hayQueHacerUnBloqueo) {
-				uso_IO(pid, 1); //Bloqueo 1 ciclo.
-				cantBloqueos--;
-			} else {
-				uso_CPU(pid, 1); //Sino, uso el CPU un ciclo.
-			}
-			
-			totalCPU--; 	//Tiempo de CPU utilizado en lanzar la llamada bloqueante o en usar el CPU.
+		if (hayQueHacerUnBloqueo)
+			uso_IO(pid, 1);
+		else
+			uso_CPU(pid, 1);
+	}
+}
 
-			if (totalCPU == 0)
-				break;
-		}
 
-		if (cantBloqueos == 0)
-			uso_CPU(pid, 1);	//Si ya no hay mas bloqueos para hacer, el resto del tiempo uso el CPU.
+void PrecalcularLlamadasBloqueantes(vector<bool>& hayLlamadaBloqueante, int cantBloqueos)
+{	
+	int totalCPU = hayLlamadaBloqueante.size();
+	vector<int> momentosLlamadasBloqueantes;
 
+	for (int i = 0; i < totalCPU; i++)
+		momentosLlamadasBloqueantes.push_back(i);
+
+	while (cantBloqueos > 0) {
+		int i = rand() % totalCPU;
+		int instanteRandom = momentosLlamadasBloqueantes[i];
+
+		hayLlamadaBloqueante[instanteRandom] = true;
+		momentosLlamadasBloqueantes.erase(momentosLlamadasBloqueantes.begin() + i);
+
+		cantBloqueos--;
 		totalCPU--;
 	}
 }
