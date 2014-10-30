@@ -1,9 +1,10 @@
 #include "sched_lottery.h"
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 
-SchedLottery::SchedLottery(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0), cantTickets(100)
+SchedLottery::SchedLottery(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0), cantTickets(0)
 {
 	std::srand(semilla); 
 }
@@ -16,36 +17,38 @@ SchedLottery::~SchedLottery()
 void SchedLottery::load(int pid) 
 {
   	
-  	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
+  	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 10));
+  	cantTickets += 10;
 
-  	//Actualizamos la cantidad de tickets de todos
-
-  	redistribuirTickets(0);
 }
 
 void SchedLottery::load(int pid,int deadline) 
 {
-	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
+	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 10));
+  	cantTickets += 10;
 
-  	//Actualizamos la cantidad de tickets de todos
 
-  	redistribuirTickets(0);
 }
 
 void SchedLottery::unblock(int pid) 
 {
-	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
-
-	//marco que ya se desbloqueo!
-
-	std::map<int,std::pair<int,bool> >::iterator it = aCompensar.find(pid);
+	std::map<int,int> ::iterator it = aCompensar.find(pid);
 
 	if(it != aCompensar.end())
 	{
-		(it->second).second = true;
+		int ticketsCompensados = ((it->second)*10);
+		tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, ticketsCompensados));
+  		cantTickets += ticketsCompensados;
+		aCompensar.erase(it);
+		hayCompensados = true;
+	}
+	else
+	{
+		tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 10));
+  		cantTickets += 10;
 	}
 
-	redistribuirTickets(0);
+	
 }
 
 int SchedLottery::tick(int cpu, const enum Motivo motivo) 
@@ -74,7 +77,7 @@ int SchedLottery::tick(int cpu, const enum Motivo motivo)
 		else if (motivo == EXIT || motivo == BLOCK)
 		{
 			if(motivo == BLOCK && cantTicks < quantum)
-				compensar(tareaActual, cantTicks);
+				guardarCompensacion(tareaActual, cantTicks);
 
 			cantTicks = 0;
 
@@ -85,17 +88,17 @@ int SchedLottery::tick(int cpu, const enum Motivo motivo)
 				it++;
 			}
 
+			cantTickets-=(it->second);
+
 			tareasYTickets.erase(it);
 
 			if(tareasYTickets.empty())
 			{
 				return IDLE_TASK;
 			}
-
-			redistribuirTickets(1);
+			
 
 			return loteria();
-			
 		}
 }
 	
@@ -105,97 +108,52 @@ int SchedLottery::loteria()
 	
 	int ticketGanador = rand() % cantTickets;
 
+	cout << "hay " << tareasYTickets.size() << "tareas y gano el ticket "<< ticketGanador << endl;
+
 	int duenioTicketGanador;
 
 		std::list<std::pair<int,int> >::iterator it = tareasYTickets.begin();
 
 		int sumaParcial = 0;
-
+/*
 		//caso base = 0
 		if(ticketGanador == 0)
-		 return tareasYTickets.begin()->first;
+		 duenioTicketGanador = tareasYTickets.begin()->first;
+*/
+		bool hayGanador;
 
-  		while (it!=tareasYTickets.end())
+  		while (!hayGanador)
   		{
+  			int primerTicket = sumaParcial;
+  			int ultimoTicket = primerTicket + (it->second) -1;
 
-  			if(ticketGanador >= sumaParcial && ticketGanador <= sumaParcial + it->second)
+  			//HACER LO DE PRIMER TICKET Y ULTIMO TICKET!!
+  			if(primerTicket <= ticketGanador && ticketGanador <= ultimoTicket)
   			{
   				duenioTicketGanador = it->first;
-  				 break;		
+  				hayGanador = true;
+  				cout << "gano la tarea " << duenioTicketGanador << " con rango [" << primerTicket << ".." << ultimoTicket << "]" << endl;		
   				
   			}
   			sumaParcial += it->second;
-
   			++it;
   		}
-  		redistribuirTickets(1);
+
+  		
+  		
+  		hayCompensados = false;
+  		normalizarTickets();
+  		
   		return duenioTicketGanador;
+
+  		//cout << "entonces gano la tarea " << duenioTicketGanador << endl;
 }
 
 
-// FUNCION REDISTRIBUIR TICKETS!
 
-void SchedLottery::redistribuirTickets(int modo)
-{
-	//Primero redistribuimos equitativamente entre todas las tareas
 
-	cantTickets = 100;
 
-	int cantTareas = tareasYTickets.size();
-
-  	int ticketsCadaUno = cantTickets / cantTareas;
-
-  	int resto = cantTickets % cantTareas; // Al resto lo repartimos entre todas
-
-  	
-  	std::list<std::pair<int,int> >::iterator it =tareasYTickets.begin();
-
-  	for (; it!=tareasYTickets.end(); ++it)
-  	{
-  		it->second =ticketsCadaUno;
-
-  		//reparto el resto, un ticket para cada uno hasta que se termine
-
-  		if(resto>0)
-  		{
-  			it->second++;
-  			resto--;
-  		}
-
-  	}
-  	// si fui llamado desde un tick, elimino las tareas compensadas y termino
-  	if(modo == 1)
-  	{
-  		aCompensar.clear();
-  	}
-
-  	if(modo == 0)
-  	{// si fui llamado desde un block o desde un tick, tengo que agregarle las compensaciones a las tareas
-  	//  que habian sido compensadas con la nueva distribucion de tickets
-
-  		cantTickets = 0;
-
-  		std::list<std::pair<int,int> >::iterator it2 =tareasYTickets.begin();
-
-  		for(; it2!=tareasYTickets.end(); ++it2)
-  		{
-  			std::map<int,std::pair<int,bool> >::iterator itDic = aCompensar.find(it2->first);
-
-  			if(itDic != aCompensar.end())
-  			{
-  				if((itDic->second).second)
-  				{
-  					it2->second *= ((itDic->second).first);
-  				}
-  			}
-
-  			cantTickets += it2->second;
-  		}
-  	}
-
-}
-
-void SchedLottery::compensar(int tarea, int ticks)
+void SchedLottery::guardarCompensacion(int tarea, int ticks)
 {
 	int ticksConsumidos = ticks;
 
@@ -208,6 +166,19 @@ void SchedLottery::compensar(int tarea, int ticks)
 
 	int multiplicador = (int) 1 / fraccionQuantum;
 
-	aCompensar.insert(aCompensar.begin(), std::make_pair(tarea, std::make_pair(multiplicador, false)));
+	aCompensar.insert(aCompensar.begin(), std::make_pair(tarea, multiplicador));
 
+}
+
+void SchedLottery::normalizarTickets()
+{
+	std::list<std::pair<int,int> >::iterator it = tareasYTickets.begin();
+
+	while (it!=tareasYTickets.end())
+  	{
+  		it->second = 10;
+  		it++;
+  	}
+
+  	cantTickets = tareasYTickets.size()*10;
 }

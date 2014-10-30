@@ -17,13 +17,13 @@ class SchedLotteryBase : public SchedBase {
 
     private:
 		int loteria();
-		void redistribuirTickets();
 		
 		// el valor de quantum por parametro
 		int quantum;
 		// la cantidad de ticks actuak
 		int cantTicks;
 		int semilla;
+		int cantTickets;
 		std::list<std::pair<int,int> > tareasYTickets;
 				
 		

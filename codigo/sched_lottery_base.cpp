@@ -1,42 +1,41 @@
 #include "sched_lottery_base.h"
 #include <cstdlib>
-
+#include <iostream>
 using namespace std;
 
-SchedLotteryBase::SchedLotteryBase(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0)
+SchedLotteryBase::SchedLotteryBase(vector<int> argn) : quantum(argn[1]), semilla(argn[2]), cantTicks(0), cantTickets(0)
 {
-	std::srand(semilla);
+	std::srand(semilla); 
 }
 
-SchedLotteryBase::~SchedLotteryBase()
+SchedLotteryBase::~SchedLotteryBase() 
 {
 
 }
 
-void SchedLotteryBase::load(int pid)
+void SchedLotteryBase::load(int pid) 
 {
   	
-  	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
+  	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 10));
+  	cantTickets += 10;
 
-  	//Actualizamos la cantidad de tickets de todos
-
-  	redistribuirTickets();
 }
 
-void SchedLotteryBase::load(int pid,int deadline)
+void SchedLotteryBase::load(int pid,int deadline) 
 {
-	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
+	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 10));
+  	cantTickets += 10;
 
-  	//Actualizamos la cantidad de tickets de todos
 
-  	redistribuirTickets();
 }
+
 
 void SchedLotteryBase::unblock(int pid)
 {
-	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 0));
+	tareasYTickets.insert(tareasYTickets.begin(),std::pair<int,int>(pid, 10));
 
-	redistribuirTickets();
+  	cantTickets += 10;
+	
 }
 
 int SchedLotteryBase::tick(int cpu, const enum Motivo motivo)
@@ -68,10 +67,12 @@ int SchedLotteryBase::tick(int cpu, const enum Motivo motivo)
 
 			std::list<std::pair<int, int> >::iterator it = tareasYTickets.begin();
 
-			while(it->first != tareaActual)
+			while(it != tareasYTickets.end() && it->first != tareaActual)
 			{
 				it++;
 			}
+
+			cantTickets-=(it->second);
 
 			tareasYTickets.erase(it);
 
@@ -79,74 +80,55 @@ int SchedLotteryBase::tick(int cpu, const enum Motivo motivo)
 			{
 				return IDLE_TASK;
 			}
-
-			redistribuirTickets();
-
+			
 			return loteria();
 			
 		}
 }
 	
-
 int SchedLotteryBase::loteria()
 {
-	int ticketGanador = rand() % 100;
+	
+	int ticketGanador = rand() % cantTickets;
+
+	cout << "hay " << tareasYTickets.size() << "tareas y gano el ticket "<< ticketGanador << endl;
 
 	int duenioTicketGanador;
 
 		std::list<std::pair<int,int> >::iterator it = tareasYTickets.begin();
 
-		if(ticketGanador == 0)
-		{
-			return tareasYTickets.begin()->first;
-		}
-
 		int sumaParcial = 0;
+/*
+		//caso base = 0
+		if(ticketGanador == 0)
+		 duenioTicketGanador = tareasYTickets.begin()->first;
+*/
+		bool hayGanador;
 
-  		while (it!=tareasYTickets.end() && (sumaParcial < ticketGanador))
+  		while (!hayGanador)
   		{
-  			sumaParcial += it->second;
+  			int primerTicket = sumaParcial;
+  			int ultimoTicket = primerTicket + (it->second) -1;
 
-  			if(ticketGanador <= sumaParcial)
+  			//HACER LO DE PRIMER TICKET Y ULTIMO TICKET!!
+  			if(primerTicket <= ticketGanador && ticketGanador <= ultimoTicket)
   			{
   				duenioTicketGanador = it->first;
-  				
-  					return duenioTicketGanador;
+  				hayGanador = true;
+  				cout << "gano la tarea " << duenioTicketGanador << " con rango [" << primerTicket << ".." << ultimoTicket << "]" << endl;		
   				
   			}
-
+  			sumaParcial += it->second;
   			++it;
   		}
+
+  		
+  		
+  		
+  		return duenioTicketGanador;
+
+  		//cout << "entonces gano la tarea " << duenioTicketGanador << endl;
 }
 
 
-// FUNCION REDISTRIBUIR TICKETS!
 
-void SchedLotteryBase::redistribuirTickets()
-{
-	// Dividimos los 100 tickets por la cantidad de Tareas
-
-	int cantTareas = tareasYTickets.size();
-
-  	int ticketsCadaUno = 100 / cantTareas;
-
-  	int resto = 100 % cantTareas; // Al resto lo repartimos entre todas
-
-  	
-  	std::list<std::pair<int,int> >::iterator it =tareasYTickets.begin();
-
-  	for (; it!=tareasYTickets.end(); ++it)
-  	{
-  		it->second =ticketsCadaUno;
-
-  		//reparto el resto, un ticket para cada uno hasta que se termine
-
-  		if(resto>0)
-  		{
-  			it->second++;
-  			resto--;
-  		}
-
-  	}
-
-}

@@ -8,13 +8,11 @@ N="1"
  TicksTask1=0
  TicksTask2=0
  TicksTask3=0
- TicksTask4=0
 
  TotalTicksTask0=0
  TotalTicksTask1=0
  TotalTicksTask2=0
  TotalTicksTask3=0
- TotalTicksTask4=0
 
 > result.txt
 
@@ -47,14 +45,9 @@ do
 			elif [ "${fields[2]}" == "3" ]
 			then 
 					((TicksTask3++))	
-			
-
-			elif [ "${fields[2]}" == "4" ]
-			then 
-					((TicksTask4++))	
 			fi
-			
-			if [ "${fields[1]}" == "251" ]
+
+			if [ "${fields[1]}" == "50" ]
 			then
 				break
 			fi
@@ -69,15 +62,13 @@ do
  	((TotalTicksTask1+=TicksTask1))
  	((TotalTicksTask2+=TicksTask2))
 	((TotalTicksTask3+=TicksTask3))
-	((TotalTicksTask4+=TicksTask4))
 
 	PromedioTask0=$(awk "BEGIN {printf \"%.2f\",${TotalTicksTask0}/${N}}")
 	PromedioTask1=$(awk "BEGIN {printf \"%.2f\",${TotalTicksTask1}/${N}}")
 	PromedioTask2=$(awk "BEGIN {printf \"%.2f\",${TotalTicksTask2}/${N}}")
 	PromedioTask3=$(awk "BEGIN {printf \"%.2f\",${TotalTicksTask3}/${N}}")
-	PromedioTask4=$(awk "BEGIN {printf \"%.2f\",${TotalTicksTask4}/${N}}")
 
-	echo "$N $PromedioTask0 $PromedioTask1 $PromedioTask2 $PromedioTask3 $PromedioTask4" >> result.txt
+	echo "$N $PromedioTask0 $PromedioTask1 $PromedioTask2 $PromedioTask3" >> result.txt
 	#echo "$N $TicksTask0 $TicksTask1 $TicksTask2 $TicksTask3 $TicksTask4" >> result.txt
 
 
@@ -85,7 +76,6 @@ do
  	TicksTask1=0
  	TicksTask2=0
  	TicksTask3=0
- 	TicksTask4=0
 
     N=$[ $N+1 ]
 done
