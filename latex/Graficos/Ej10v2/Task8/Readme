@@ -1,0 +1,3 @@
+En estos puede verse como, con los compensation tickets, hay "bursts" de tareas I/O, se bloquea una, obtiene el CPU otra, se bloquea y en el siguiente tick vuelve la anterior porque esta compensada, y esto ocurre varias veces. Notar que una vez que una tarea CPU roba el cpu, ya no vuelven a tnerla ya que pierden los compensation
+
+En el ejemplo 3 puede verse claramente que las tareas I/O terminan antes que las CPU, y sin compensation terminan ambas al final
