@@ -1,63 +1,123 @@
 
 \subsection{Ejercicio 10}
 
-Dadas las implementaciones de $ShedLottery$, con o sin tickets compensatorios (respectivamente en $sched_lottery.cpp$ y $sched_lottery_base.cpp$), el ejercicio nos propone ponerlas a prueba y compararlas, relacion\'andolas con la problem\'atica que presentaban los autores y verificar si los tickets compensatorios son una soluci\'on viable. A continuaci\'on mostramos los experimentos realizados:
+Dadas las implementaciones de $ShedLottery$, con o sin tickets compensatorios (respectivamente en $sched\_lottery.cpp$ y $sched\_lottery\_base.cpp$), el ejercicio nos propone ponerlas a prueba y compararlas, relacion\'andolas con la problem\'atica que presentaban los autores y verificar si los tickets compensatorios son una soluci\'on viable. 
 
 \vspace{2mm}
 
-Para comenzar, realizamos experimentaciones sobre lotes ya utilizados en otros ejercicios. Para estos experimentos utilizamos semillas aleatorias ya que es indistinto, y Quantum = 2, de esa forma hay muchos cambios de tarea donde se realizan loter\'ias.
+Para esto generamos dos lotes distintos: \textbf{Lote7}, que consta de 3 tareas intensivas de CPU y una tarea de I/O bloqueante, y para comprobar que el mecanismo funciona con varias tareas bloqueadas al mismo tiempo, el lote \textbf{Lote8} con 2 tareas intenstivas de CPU y 2 bloqueantes.
 
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testBase.png}
+\vspace{2mm}
+\textbf{Lote7:}
+
+\begin{lstlisting}[numbers=none]
+@0:
+*3 TaskCPU 50
+*1 TaskConsola 50 1 2
+\end{lstlisting}
+
+\vspace{2mm}
+\textbf{Lote8:}
+
+\begin{lstlisting}[numbers=none]
+@0:
+*2 TaskCPU 50
+*2 TaskConsola 25 1 2
+\end{lstlisting}
+
+\subsubsection{Experimentos: Lote 7}
+
+\vspace{2mm}
+
+Los experimentos fueron realizados con los par\'ametros: \textbf{semilla} aleatoria(pero la misma para cada comparaci\'on entre schedulers), \textbf{quantum} de tres ticks, \textbf{bloqueos} de un tick (con el objetivo de generar muchos cambios de contexto y tener m\'as casos de an\'alisis), \textbf{cantidad de procesadores} de uno y costo de \textbf{cambio de contexto} de cero, para hacer m\'as sencillo el an\'alisis y no agregar variables que no aportan al experimento.
+
+\vspace{2mm}
+
+\textbf{Caso1:}
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_1.png}
 \begin{center}
- \textit{Lote = 6, Scheduler = Base, Quantum = 2, Semilla = 1800}.
+ \textit{Scheduler = Compensatorio, Semilla = 14178}.
 \end{center}
 
 
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testComp.png}
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_1_base.png}
 \begin{center}
- \textit{Lote = 6, Scheduler = Compensatorio, Quantum = 2, Semilla = 1800}.
-\end{center}
-
-
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testBase2.png}
-\begin{center}
- \textit{Lote = 4, Scheduler = Base, Quantum = 2, Semilla = 2156}.
-\end{center}
-
-
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testComp2.png}
-\begin{center}
- \textit{Lote = 4, Scheduler = Compensatorio, Quantum = 2, Semilla = 2156}.
-\end{center}
-
-	
-
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testBase3.png}
-\begin{center}
- \textit{Lote = 3, Scheduler = Base, Quantum = 2, Semilla = 990}.
-\end{center}
-
-
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testComp3.png}
-\begin{center}
- \textit{Lote = 3, Scheduler = Compensatorio, Quantum = 2, Semilla = 990}.
+ \textit{Scheduler = No Compensatorio, Semilla = 14178}.
 \end{center}
 
 \vspace{2mm}
 
-Para este test generamos un lote de tareas nuevo, en el cual ejecutamos 3 tareas de uso intensivo de CPU por 30 ticks, y 2 tareas TaskConsola que realicen 10 llamadas bloqueantes de 1 tick de duraci\'on, 
 
+Pueden notarse las 3 tareas intensivas de CPU y la tarea I/O, que procesa 1 tick y se bloquea. Aqui vemos como, en el caso sin compensation tickets, la tarea se bloquea, perdiendo $2/3$ de su quantum y luego vuelve a obtener el cpu muchos ticks despues, perdiendo tiempo de procesamiento. Esto se nota claramente al ver que m\'as de la mitad de su tiempo de procesamiento se produce al final de la simulaci\'on.
 
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testBase5.png}
+\vspace{2mm}
+
+En el caso con compensation tickets, puede notarse como luego de bloquearse, en el siguiente cambio de contexto a su desbloqueo vuelve a obtener la cpu en varios casos, producto de su aumento de probabilidad gracias a los compensation tickets. Pueden compararse adem\'as ambos finales de las simulaciones y notar que, en la simulaci\'on con tickets compensatorios, restan muchos menos ticks de la tarea I/O por procesar.
+
+\vspace{2mm}
+\textbf{Caso2:}
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_2.png}
 \begin{center}
- \textit{Lote = ej10, Scheduler = Base, Quantum = 2, Semilla = 1199214}.
+ \textit{Scheduler = Compensatorio, Semilla = 15320}.
 \end{center}
 
 
-\includegraphics[width=1\textwidth]{./Graficos/Ej10/testComp5.png}
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_2_base.png}
 \begin{center}
- \textit{Lote = ej10, Scheduler = Compensatorio, Quantum = 2, Semilla = 1199214}.
+ \textit{Scheduler = No Compensatorio, Semilla = 15320}.
+\end{center}
+
+En este caso pueden observarse tambi\'en bursts de la tarea I/O, y puede notarse adem\'as que una vez que la tarea pierde la asignaci\'on de la CPU en su tick compensado, es poco probable que la vuelva a obtener por un per\'iodo, ya que debido a la implementaci\'on de tickets compensatorios, si una tarea compensada pierde la asignac\'on, sus tickets compensatorios son retirados de todas formas.
+
+\vspace{2mm}
+\textbf{Caso3:}
+
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_3.png}
+\begin{center}
+ \textit{Scheduler = Compensatorio, Semilla = 19281}.
 \end{center}
 
 
-Puede apreciarse en todos los casos como en el scheduler base, las tareas que utilizan IO se amontonan en el final de la ejecuci\'on, bloque\'andose y no retomando control del cpu hasta mucho despu\'es. En cambio, en el scheduler compensatorio pueden apreciarse algunas tareas en la mitad de la ejecuci\'on que luego de desbloquearse vuelven a tomar control de la CPU, gracias a la compensaci\'on.
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_3_base.png}
+\begin{center}
+ \textit{Scheduler = No Compensatorio, Semilla = 19281}.
+\end{center}
+
+En este caso se aprecia claramente que la implementaci\'on de tickets compensatorios equilibra efectivamente la asignaci\'on de CPU, ya que comparado con la simulaci\'on no compensada, donde la tarea I/O debe terminar su ejecuci\'on al \'ultimo, en el caso compensado esta tarea recibe la asignaci\'on del CPU mucho m\'as frecuentemente, e incluso finaliza su ejecuci\'on \textbf{antes} que dos de las dem\'as.
+
+\vspace{2mm}
+\textbf{Caso4:}
+
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_4.png}
+\begin{center}
+ \textit{Scheduler = Compensatorio, Semilla = 25824}.
+\end{center}
+
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task7/ej9_4_base.png}
+\begin{center}
+ \textit{Scheduler = No Compensatorio, Semilla = 25824}.
+\end{center}
+
+El \'ultimo caso analizado refleja correctamente todo lo anteriormente planteado. De esta forma concluimos en que en el caso de una tarea que se bloquea frecuentemente y compite por el CPU contra varias otras de uso intensivo de \'este, la implementaci\'on de tickets compensatorios logra homogeneizar la asignaci\'on y aprovechar ciclos de procesamiento.
+
+\subsubsection{Experimentos: Lote 8}
+
+\vspace{2mm}
+
+\textbf{Caso1:}
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_1.png}
+\begin{center}
+ \textit{Scheduler = Compensatorio, Semilla = 14178}.
+\end{center}
+
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_1_base.png}
+\begin{center}
+ \textit{Scheduler = No Compensatorio, Semilla = 14178}.
+\end{center}
