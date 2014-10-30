@@ -109,15 +109,68 @@ El \'ultimo caso analizado refleja correctamente todo lo anteriormente planteado
 
 \vspace{2mm}
 
+Con el lote 8 analizamos si el mecanismo se mantiene eficiente cuando hay m\'as de una tarea I/O en ejecuci\'on.
+
+\vspace{2mm}
+
+
 \textbf{Caso1:}
 
-\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_1.png}
+\vspace{2mm}
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_3.png}
 \begin{center}
- \textit{Scheduler = Compensatorio, Semilla = 14178}.
+ \textit{Scheduler = Compensatorio, Semilla = 29317}.
 \end{center}
 
 
-\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_1_base.png}
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_3_base.png}
 \begin{center}
- \textit{Scheduler = No Compensatorio, Semilla = 14178}.
+ \textit{Scheduler = No Compensatorio, Semilla = 29317}.
 \end{center}
+
+\vspace{2mm}
+
+A primera vista puede notarse que el mecanismo contin\'ua siendo eficiente, ya que en el modo compensado las tareas I/O terminan junto con las dem\'as, en cambio en el modo no compensado finalizan \'ultimas.
+\vspace{2mm}
+
+\textbf{Caso2:}
+
+\vspace{2mm}
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_4.png}
+\begin{center}
+ \textit{Scheduler = Compensatorio, Semilla = 21894}.
+\end{center}
+
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_4_base.png}
+\begin{center}
+ \textit{Scheduler = No Compensatorio, Semilla = 21894}.
+\end{center}
+
+\vspace{2mm}
+
+
+En este caso es a\'un m\'as notoria la tendencia, ya que en el modo no compensado las tareas I/O poseen casi todo su tiempo de procesamiento al final, en cambio en el modo compensado todas las tareas finalizan aproximadamente al mismo momento. Puede apreciarse como se aprovechan ticks de CPU, simplemente con ver la escala de ticks. Esto muestra que es eficiente priorizar la asignaci\'on de CPU a las tareas que se bloquean constantemente, ya que consumen poco tiempo de CPU y vuelven a bloquearse, trasfiriendo la CPU a otras tareas. De otra forma son relegadas hasta el final de la ejecuci\'on, y en sus bloqueos ya no quedan tareas y se debe switchear a la tarea IDLE.
+
+\vspace{2mm}
+
+\textbf{Caso3:}
+
+\vspace{2mm}
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_5.png}
+\begin{center}
+ \textit{Scheduler = Compensatorio, Semilla = 4076}.
+\end{center}
+
+
+\includegraphics[width=1\textwidth]{./Graficos/Ej10v2/Task8/ej9_5_base.png}
+\begin{center}
+ \textit{Scheduler = No Compensatorio, Semilla = 4076}.
+\end{center}
+
+\vspace{2mm}
+
+Con este caso finalizamos el an\'alisis. ya que consideramos que los resultados son claros y que el mecanismo de compensation tickets, tal como lo describen los autores es muy efectivo en solucionar la problem\'atica de la asignaci\'on justa del CPU para aquellas tareas que se bloquean y no consumen su quantum entero. Mediante los compensation tickets, no s\'olo se vuelve m\'as justa la asignaci\'on, sino que tambi\'en se aprovechan ticks de procesamiento.
